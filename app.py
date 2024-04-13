@@ -1,143 +1,222 @@
+import importlib.util
+import subprocess
+import sys
+import shlex
+
+def verify_and_install_lib(lib_name):
+    """
+    Verifica la existencia de una biblioteca en Python y ejecuta "pip install" si no está presente.
+    :param lib_name: nombre de la biblioteca.
+    :return: True si la biblioteca se encontró o se instaló correctamente.
+    """
+    has_lib = importlib.util.find_spec(lib_name) is not None
+    if not has_lib:
+        print(f"La biblioteca {lib_name} no se encontró. Instalándola...")
+        subprocess.check_call([sys.executable, "-m", "pip", "install", lib_name])
+    return has_lib
+
+# Lista de bibliotecas a verificar y instalar si no están presentes
+libs_to_install = [
+    "logging",
+    "flask",
+    "art",
+    "colorlog",
+    "tqdm"
+]
+
+# Ejecuta la verificación e instalación de cada biblioteca
+for lib in libs_to_install:
+    verify_and_install_lib(lib)
+
+
+
+import os
+import zipfile
+from urllib.request import urlretrieve
+from tqdm import tqdm
+
+class DownloadProgressBar(tqdm):
+    def update_to(self, b=1, bsize=1, tsize=None):
+        if tsize is not None:
+            self.total = tsize
+        self.update(b * bsize - self.n)
+
+def verificar_y_descomprimir_piper():
+    """
+    Verifica si existe la carpeta 'piper'. Si no existe, intenta descomprimir el archivo 'piper_windows_amd64.zip'.
+    Si el archivo tampoco existe, lo descarga desde la URL especificada con una barra de progreso y luego lo descomprime.
+    """
+    piper_carpeta = "piper"
+    piper_archivo = "piper_windows_amd64.zip"
+    piper_url = "https://github.com/rhasspy/piper/releases/download/2023.11.14-2/piper_windows_amd64.zip"
+
+    if not os.path.exists(piper_carpeta):
+        print("Carpeta 'piper' no encontrada.")
+        if os.path.exists(piper_archivo):
+            print("Descomprimiendo archivo 'piper_windows_amd64.zip'...")
+            with zipfile.ZipFile(piper_archivo, 'r') as zip_ref:
+                zip_ref.extractall()
+        else:
+            print("Descargando 'piper_windows_amd64.zip'...")
+            with DownloadProgressBar(unit='B', unit_scale=True, miniters=1, desc=piper_archivo) as t:
+                urlretrieve(piper_url, piper_archivo, reporthook=t.update_to)
+            print("Descomprimiendo archivo 'piper_windows_amd64.zip'...")
+            with zipfile.ZipFile(piper_archivo, 'r') as zip_ref:
+                zip_ref.extractall()
+    else:
+        print("Carpeta 'piper' ya existe.")
+
+if __name__ == "__main__":
+    verificar_y_descomprimir_piper()
+    
+import os
+import zipfile
+from urllib.request import urlretrieve
+from tqdm import tqdm
 import logging
-from flask import Flask, render_template, request, jsonify, after_this_request, send_from_directory
+from flask import Flask, render_template, request, jsonify, after_this_request, send_from_directory, abort
 from functools import wraps
 from io import BytesIO
 import base64
 import subprocess
-import os
 import random
 import string
 import re
 import sys
-import time
-# Configuración del registro
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+import webbrowser
+from art import text2art
+import colorlog
+from colorlog import ColoredFormatter
+import tkinter as tk
+from tkinter import filedialog
+import shlex
 
+class DownloadProgressBar(tqdm):
+    def update_to(self, b=1, bsize=1, tsize=None):
+        if tsize is not None:
+            self.total = tsize
+        self.update(b * bsize - self.n)
+
+def verificar_y_descomprimir_piper():
+    """
+    Verifica si existe la carpeta 'piper'. Si no existe, intenta descomprimir el archivo 'piper_windows_amd64.zip'.
+    Si el archivo tampoco existe, lo descarga desde la URL especificada con una barra de progreso y luego lo descomprime.
+    """
+    piper_carpeta = "piper"
+    piper_archivo = "piper_windows_amd64.zip"
+    piper_url = "https://github.com/rhasspy/piper/releases/download/2023.11.14-2/piper_windows_amd64.zip"
+
+    if not os.path.exists(piper_carpeta):
+        print("Carpeta 'piper' no encontrada.")
+        if os.path.exists(piper_archivo):
+            print("Descomprimiendo archivo 'piper_windows_amd64.zip'...")
+            with zipfile.ZipFile(piper_archivo, 'r') as zip_ref:
+                zip_ref.extractall()
+        else:
+            print("Descargando 'piper_windows_amd64.zip'...")
+            with DownloadProgressBar(unit='B', unit_scale=True, miniters=1, desc=piper_archivo) as t:
+                urlretrieve(piper_url, piper_archivo, reporthook=t.update_to)
+            print("Descomprimiendo archivo 'piper_windows_amd64.zip'...")
+            with zipfile.ZipFile(piper_archivo, 'r') as zip_ref:
+                zip_ref.extractall()
+    else:
+        print("Carpeta 'piper' ya existe.")
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+handler = logging.StreamHandler()
+formatter = ColoredFormatter(
+    "%(log_color)s%(levelname)-8s%(reset)s %(blue)s%(message)s",
+    datefmt=None,
+    reset=True,
+    log_colors={
+        'DEBUG': 'purple',
+        'INFO': 'cyan',
+        'WARNING': 'yellow',
+        'ERROR': 'red',
+        'CRITICAL': 'white,bg_red',
+    }
+)
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+
+def print_ascii_name(name):
+    ascii_name = text2art(name)
+    print(ascii_name)
+
+print_ascii_name("HirCoir")
 app = Flask(__name__)
 
-# Define el directorio donde se guardan los archivos
-file_folder = '/home/app'
+file_folder = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
 temp_audio_folder = os.path.join(file_folder, 'temp_audio')
-model_folder = os.path.join(file_folder, 'models')
-piper_binary_path = os.path.join(file_folder, 'piper', 'piper')
-
-# Crea la carpeta temp_audio si no existe
-if not os.path.exists(temp_audio_folder):
-    os.makedirs(temp_audio_folder)
-
-# Define los nombres asignados a modelos específicos
-model_names = {
-    "Español México    | Claude": "es_MX-claude-14947-epoch-high.onnx",
-    "Español México    |  Cortana v1": "es_MX-cortana-19669-epoch-high.onnx",
-    "Español México    |  Cortana v3": "es_MX-cortanav3-17139-high.onnx",
-    "Español México    |  Ald (Medium)": "es_MX-ald-medium.onnx",
-    "Español Argentina |  Microsoft Elena": "es_MX-hircoirvoicev5-high.onnx",
-    "Español México    |  Hircoir v1": "es_MX-locutor-18488-epoch-high.onnx",
-# Modelos públicos de huggingface
-    "Español España    |  Carlfm (Low)": "es_ES-carlfm-x_low.onnx",
-    "Español España    |  Davefx (Medium)": "es_ES-davefx-medium.onnx",
-    "Español España    |  Mls 9972 (Low)": "es_ES-mls_9972-low.onnx",
-    "Español Españá    |  Mls 10246 (Low)": "es_ES-mls_10246-low.onnx",
-    "Español España    |  Sharvard (Medium)": "es_ES-sharvard-medium.onnx",
-    "English US    |  Lessac (High)": "en_US-lessac-high.onnx",
-    "English US    |  Amy (Medium)": "en_US-amy-medium.onnx",
-    "English US    |  Dany (Low)": "en_US-danny-low.onnx",
-    "English US    |  HFC Male": "en_US-hfc_male-medium.onnx",
-    "English US    |  Kusal (Medium)": "en_US-kusal-medium.onnx",
-    "English US    |  Joe (Medium)": "en_US-joe-medium.onnx",
-    "English US    |  12Arctic (Medium)": "en_US-l2arctic-medium.onnx",
-    "English US    |  LibriTTS (High)": "en_US-libritts-high.onnx"
-}
-
-def multiple_replace(text, replacements):
-    # Iterar sobre cada par de remplazo
-    for old, new in replacements:
-        text = text.replace(old, new)
-    return text
+piper_binary_path = os.path.join(file_folder, 'piper', 'piper.exe')
 
 def filter_text(text):
-    # Lista de remplazos a realizar
-    replacements = [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
-    
-    # Realizar remplazos
-    filtered_text = multiple_replace(text, replacements)
-    
-    # Escapar todos los caracteres especiales dentro de las comillas
-    filtered_text = re.sub(r'(["\'])', lambda m: "\\" + m.group(0), filtered_text)
-    
+    filtered_text = shlex.quote(text)  # Utiliza shlex para eliminar caracteres especiales
+    filtered_text = filtered_text.replace('\n', ' ')
     return filtered_text
 
-# Define una función para convertir texto a voz
-def convert_text_to_speech(text, model):
+def convert_text_to_speech(text, model, model_folder):
     filtered_text = filter_text(text)
     random_name = ''.join(random.choices(string.ascii_letters + string.digits, k=8)) + '.wav'
     output_file = os.path.join(temp_audio_folder, random_name)
+    model_path = os.path.join(model_folder, model)
 
-    if os.path.isfile(piper_binary_path):
-        if model in model_names:
-            model_path = os.path.join(model_folder, model_names[model])
-            if os.path.isfile(model_path):
-                # Construye el comando para ejecutar Piper
-                command = f'echo "{filtered_text}" | "{piper_binary_path}" -m {model_path} -f {output_file}'
-                try:
-                    subprocess.run(command, shell=True, check=True)
-                    return output_file
-                except subprocess.CalledProcessError as e:
-                    logging.error(f"Error al ejecutar el comando: {e}")
-                    return None
-            else:
-                logging.error(f"Modelo '{model}' no encontrado en la ubicación especificada.")
-                return None
-        else:
-            logging.error(f"No se ha asignado un modelo para el nombre '{model}'.")
-            return None
-    else:
-        logging.error(f"No se encontró el binario de Piper en la ubicación especificada.")
-        return None
+    if os.path.isfile(piper_binary_path) and os.path.isfile(model_path):
+        command = f'echo "{filtered_text}" | "{piper_binary_path}" -m {model_path} -f {output_file}'
+        try:
+            subprocess.run(command, shell=True, check=True)
+            return output_file
+        except subprocess.CalledProcessError as e:
+            logging.error(f"Error al ejecutar el comando: {e}")
 
-# Define una función decoradora para limitar la velocidad de las solicitudes
-def rate_limit(limit):
-    def decorator(func):
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            if not hasattr(wrapper, 'last_execution'):
-                wrapper.last_execution = 0
-            elapsed_time = time.time() - wrapper.last_execution
-            if elapsed_time < limit:
-                return jsonify({'error': 'Too many requests. Please try again later.'}), 429
-            wrapper.last_execution = time.time()
-            return func(*args, **kwargs)
-        return wrapper
-    return decorator
+    return None
 
-# Define una función decoradora para restringir el acceso a la ruta /convert
 def restrict_access(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
-        # Verifica si la solicitud se hizo desde la página index.html
         referer = request.headers.get("Referer")
         if referer and referer.endswith("/"):
-            # Permite el acceso a la función si la solicitud proviene de la página index.html
             return func(*args, **kwargs)
         else:
-            # Devuelve un mensaje de error o redirecciona a otra página
-            return "Acceso no autorizado", 403  # Código de respuesta HTTP 403 - Forbidden
+            return abort(403)
     return wrapper
+
+def select_model_folder():
+    root = tk.Tk()
+    root.withdraw()
+    folder_selected = filedialog.askdirectory()
+    return folder_selected if folder_selected else None
+
+def start_flask_server():
+    model_folder = select_model_folder()
+    if model_folder:
+        logging.info("Se ha seleccionado la carpeta de modelos: %s", model_folder)
+        webbrowser.open_new_tab("http://127.0.0.1:7860/")
+        app.model_folder = model_folder  # Guardar model_folder en app
+        app.run(host='127.0.0.1', port=7860, debug=False)
+    else:
+        logging.error("No se pudo iniciar el servidor Flask debido a que no se seleccionó una carpeta de modelos.")
 
 @app.route('/')
 def index():
-    model_options = [name for name, model in model_names.items() if os.path.isfile(os.path.join(model_folder, model))]
-    # Registra el contenido de la carpeta actual
-    logging.info("Contents of current folder: %s", os.listdir(file_folder))
+    model_options = [file for file in os.listdir(app.model_folder) if file.endswith('.onnx')]
     return render_template('index.html', model_options=model_options)
+    
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'templates'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
+@app.route('/image.jpg')
+def image():
+    return send_from_directory(os.path.join(app.root_path, 'templates'), 'image.jpg', mimetype='image/jpeg')
 
 @app.route('/convert', methods=['POST'])
 @restrict_access
-@rate_limit(1)  # Limita las solicitudes a 1 por segundo
 def convert_text():
     text = request.form['text']
     model = request.form['model']
-    output_file = convert_text_to_speech(text, model)
+    output_file = convert_text_to_speech(text, model, app.model_folder)
 
     @after_this_request
     def remove_file(response):
@@ -151,23 +230,13 @@ def convert_text():
     if output_file is not None:
         with open(output_file, 'rb') as audio_file:
             audio_content = audio_file.read()
-
         audio_base64 = base64.b64encode(audio_content).decode('utf-8')
-
         response = jsonify({'audio_base64': audio_base64})
     else:
         response = jsonify({'error': 'Error al convertir texto a voz'})
 
     return response
 
-@app.route('/favicon.ico')
-def favicon():
-    return send_from_directory(os.path.join(app.root_path, 'templates'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
-
-@app.route('/image.jpg')
-def image():
-    return send_from_directory(os.path.join(app.root_path, 'templates'), 'image.jpg', mimetype='image/jpeg')
-
 if __name__ == '__main__':
     logging.info("Se está iniciando la aplicación.")
-    app.run(host='0.0.0.0', port=7860, debug=False)
+    start_flask_server()

@@ -1,49 +1,42 @@
 ## Introducción
 
-Bienvenido a la documentación de la aplicación de síntesis de voz utilizando Piper. Esta aplicación permite convertir texto a voz en varios idiomas y acentos utilizando modelos de síntesis de voz personalizados y públicos, dichos modelos deben de ser basados en el formato .onnx compartible con Piper. Además, utiliza el framework Flask para crear una interfaz web interactiva y la biblioteca Hugging Face para descargar y utilizar todos los modelos de síntesis de voz.
+Bienvenido a la documentación de la aplicación de síntesis de voz utilizando Piper para Windows. Esta aplicación permite convertir texto a voz en varios idiomas y acentos utilizando modelos de síntesis de voz personalizados y públicos, dichos modelos deben de ser basados en el formato .onnx compatible con Piper. Además, utiliza el framework Flask para crear una interfaz web interactiva.
 
 ![Captura](preview.png)
-## Despliegue de App
 
-Para desplegar la aplicación, sigue los pasos a continuación:
+## Despliegue de la Aplicación
+
+Para desplegar la aplicación, sigue los siguientes pasos:
 
 1. Clona el repositorio en tu servidor:
 
-```
-git clone https://github.com/HirCoir/HirCoir-Piper-tts-app.git
-```
+   ```bash
+   git clone -b Windows https://github.com/HirCoir/HirCoir-Piper-tts-app.git
+   ```
 
-2. Haz un `cd` al repositorio clonado:
+2. Entra al directorio del repositorio clonado:
 
-```
-cd HirCoir-Piper-tts-app
-```
+   ```bash
+   cd HirCoir-Piper-tts-app
+   ```
 
-3. Construye el contenedor de Docker:
+3. Ejecuta el archivo `app.py` con Python:
 
-```
-docker build --build-arg TOKEN_HUGGINGFACE=tu-token-de-huggingface --build-arg REPO_HUGGINGFACE=tu-repo-de-huggingface .
-```
+   ```bash
+   python app.py
+   ```
+   
+4. Seleccionar carpeta con modelos:
+   Al ejecutar `python app.py` este automáticamente abrirá una ventaja donde debe de seleccionar la carpeta de sus modelos .onnx.
 
-En este paso, proporcionas tu token de Hugging Face para descargar los modelos de voz privados y el repositorio de Hugging Face donde se encuentran tus modelos de voz personalizados. Si no tienes modelos personalizados, simplemente ignora la variable de entorno `--build-arg TOKEN_HUGGINGFACE=tu-token-de-huggingface --build-arg REPO_HUGGINGFACE=tu-repo-de-huggingface`.
+## Consideraciones Importantes
 
-4. Correr el contenedor:
-
-```
-docker run -d --name tts-app -p 7860:7860 tts-app
-```
-
-Esto ejecutará la aplicación en el puerto 7860 y le permitirá acceder a ella en su navegador web en `localhost:7860`.
-
-## Consideraciones importantes
-
-- Asegúrate de que Docker y Git están instalados en tu servidor antes de ejecutar estos comandos.
-- No compartas tu token de Hugging Face con nadie. Es sensible y si alguien lo utiliza mal podría causar problemas en tu cuenta de Hugging Face.
-- Los modelos de síntesis de voz de Hugging Face pueden ser pesados y tomar tiempo en descargarse. Por favor, ten paciencia.
+- Asegúrate de tener Python instalado en tu sistema antes de ejecutar la aplicación.
+- Debes de tener los modelos de voz .onnx en una carpeta para poder cargarlos desde la app.py
 
 ## Contribuir
 
-Si tienes sugerencias para mejorar la aplicación, considera abrir un issue o hacer un pull request en el repositorio. Esto me ayudará a mejorar la aplicación y proporcionar una mejor experiencia de usuario.
+Si tienes sugerencias para mejorar la aplicación, considera abrir un issue o hacer un pull request en el repositorio. Esto nos ayudará a mejorar la aplicación y proporcionar una mejor experiencia de usuario.
 
 ## Créditos
 
