@@ -1,9 +1,8 @@
-# Define the base image, Python 3.12
 FROM python:3.12
 
 # Define the Hugging Face token as a build argument
-ARG TOKEN_HUGGINGFACE=${TOKEN_HUGGINGFACE}
-
+ARG TOKEN_HUGGINGFACE={$REPO_HUGGINGFACE}
+ARG REPO_HUGGINGFACE={REPO_HUGGINGFACE}
 # Define the base download URL
 ENV DOWNLOAD_URL_BASE=https://github.com/rhasspy/piper/releases/download/2023.11.14-2/
 
@@ -23,7 +22,7 @@ fi
 # Create the application user and set the workspace
 RUN useradd -m -u 1000 app
 WORKDIR /home/app
-
+RUN mkdir temp_audio
 # Download and extract Piper binaries
 RUN dpkgArch="$(dpkg --print-architecture)" && \
     case "${dpkgArch##*-}" in \
@@ -37,33 +36,13 @@ RUN dpkgArch="$(dpkg --print-architecture)" && \
 # Copy the app code
 COPY --chown=app:app . .
 
-# Define the Hugging Face repo
-ARG REPO_HUGGINGFACE=${REPO_HUGGINGFACE}
-
 # Comprueba si REPO_HUGGINGFACE tiene un valor antes de ejecutar la línea RUN
 RUN if [ -z "$REPO_HUGGINGFACE" ]; then \
     echo "No hubo REPO_HUGGINGFACE, no se realiza la descarga."; \
 else \
-    mkdir models && cd models; huggingface-cli download $REPO_HUGGINGFACE --local-dir .; \
+    mkdir /home/app/models && cd /home/app/models; huggingface-cli download $REPO_HUGGINGFACE --local-dir /home/app/models; \
 fi
-
-# Download public models from HuggingFace
-#RUN cd /home/app/models; huggingface-cli download csukuangfj/vits-piper-es_ES-carlfm-x_low --local-dir .
-RUN cd /home/app/models; huggingface-cli download csukuangfj/vits-piper-es_ES-davefx-medium --local-dir .
-#RUN cd /home/app/models; huggingface-cli download csukuangfj/vits-piper-es_ES-mls_9972-low --local-dir .
-#RUN cd /home/app/models; huggingface-cli download csukuangfj/vits-piper-es_ES-mls_10246-low --local-dir .
-RUN cd /home/app/models; huggingface-cli download csukuangfj/vits-piper-es_ES-sharvard-medium --local-dir .
-#RUN cd /home/app/models; huggingface-cli download csukuangfj/vits-piper-es_MX-ald-medium --local-dir .
-#RUN cd /home/app/models; huggingface-cli download csukuangfj/vits-piper-en_US-amy-low --local-dir .
-#RUN cd /home/app/models; huggingface-cli download csukuangfj/vits-piper-en_US-amy-medium --local-dir .
-#RUN cd /home/app/models; huggingface-cli download csukuangfj/vits-piper-en_US-danny-low --local-dir .
-#RUN cd /home/app/models; huggingface-cli download csukuangfj/vits-piper-en_US-hfc_male-medium --local-dir .
-#RUN cd /home/app/models; huggingface-cli download csukuangfj/vits-piper-en_US-kusal-medium --local-dir .
-#RUN cd /home/app/models; huggingface-cli download csukuangfj/vits-piper-en_US-joe-medium --local-dir .
-#RUN cd /home/app/models; huggingface-cli download csukuangfj/vits-piper-en_US-l2arctic-medium --local-dir .
-RUN cd /home/app/models; huggingface-cli download csukuangfj/vits-piper-en_US-libritts-high --local-dir .
-RUN cd /home/app/models; huggingface-cli download csukuangfj/vits-piper-en_US-lessac-high --local-dir .
-
+RUN mkdir /home/app/models; cd /home/app/models; wget https://huggingface.co/spaces/HirCoir/Piper-TTS-Spanish/resolve/main/es_MX-claude-14947-epoch-high.onnx; wget https://huggingface.co/spaces/HirCoir/Piper-TTS-Spanish/resolve/main/es_MX-claude-14947-epoch-high.onnx.json
 # Expose the port and switch back to the application user
 EXPOSE 7860
 USER root
