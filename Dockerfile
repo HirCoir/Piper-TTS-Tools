@@ -1,6 +1,7 @@
 FROM python:3.12
 
 # Define the Hugging Face token as a build argument
+#ARG TOKEN_HUGGINGFACE=${TOKEN_HUGGINGFACE}
 ARG TOKEN_HUGGINGFACE={$REPO_HUGGINGFACE}
 ARG REPO_HUGGINGFACE={REPO_HUGGINGFACE}
 # Define the base download URL
@@ -35,6 +36,9 @@ RUN dpkgArch="$(dpkg --print-architecture)" && \
 
 # Copy the app code
 COPY --chown=app:app . .
+
+# Define the Hugging Face repo
+#ARG REPO_HUGGINGFACE=${REPO_HUGGINGFACE}
 
 # Comprueba si REPO_HUGGINGFACE tiene un valor antes de ejecutar la línea RUN
 RUN if [ -z "$REPO_HUGGINGFACE" ]; then \
