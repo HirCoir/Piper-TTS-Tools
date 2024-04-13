@@ -6,6 +6,7 @@ import subprocess
 import base64
 import logging
 from flask import Flask, request, jsonify
+import shlex
 
 app = Flask(__name__)
 
@@ -17,15 +18,15 @@ model_folder = "/home/app/models/"
 model_names = {
     "kamora": {
         "model_path": "es_MX-kamora-tiny-x-low.onnx",
-        "replacements": [('\n', ','),('*', '')]
+        "replacements": [('\n', '. '),('*', '')]
     },
     "claude": {
         "model_path": "es_MX-claude-14947-epoch-high.onnx",
         "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
     },
-    "cortana": {
-        "model_path": "es_MX-cortana-26284-high.onnx",
-        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
+    "kamora-v2": {
+        "model_path": "kamora.onnx",
+        "replacements": [('\n', '. '),('*', '')]
     }
 }
 
@@ -43,8 +44,8 @@ def filter_text(text, model_name):
         replacements = model_names[model_name]["replacements"]
         # Realizar reemplazos específicos del modelo
         filtered_text = multiple_replace(text, replacements)
-        # Escapar todos los caracteres especiales dentro de las comillas
-        filtered_text = re.sub(r'(["\'])', lambda m: "\\" + m.group(0), filtered_text)
+        # Eliminar caracteres especiales usando shlex
+        filtered_text = shlex.quote(filtered_text)
         return filtered_text
     else:
         logging.error(f"No se encontró el modelo '{model_name}'.")
@@ -62,7 +63,7 @@ def convert_text_to_speech(text, model_name):
     if os.path.isfile(piper_binary_path):
         model_path = os.path.join(model_folder, model_names[model_name]["model_path"])
         if os.path.isfile(model_path):
-            command = f'echo "{filtered_text}" | "{piper_binary_path}" -m {model_path} -f {output_file}'
+            command = f'echo {filtered_text} | "{piper_binary_path}" -m {model_path} -f {output_file}'
             print(f"Executing: {command}")
             try:
                 subprocess.run(command, shell=True, check=True)
