@@ -1,15 +1,15 @@
 import logging
-from flask import Flask, render_template, request, jsonify, after_this_request, send_from_directory
-from functools import wraps
-from io import BytesIO
-import base64
-import subprocess
 import os
 import random
-import string
 import re
-import sys
+import string
+import subprocess
 import time
+import base64
+
+from flask import Flask, render_template, request, jsonify, after_this_request, send_from_directory
+from functools import wraps
+
 # Configuración del registro
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -25,29 +25,88 @@ piper_binary_path = os.path.join(file_folder, 'piper', 'piper')
 if not os.path.exists(temp_audio_folder):
     os.makedirs(temp_audio_folder)
 
-# Define los nombres asignados a modelos específicos
+# Define los nombres asignados a modelos específicos, en caso de no existir no se muestran
 model_names = {
-    "Español México    | Claude": "es_MX-claude-14947-epoch-high.onnx",
-    "Español México    |  Cortana v1": "es_MX-cortana-19669-epoch-high.onnx",
-    "Español México    |  Cortana v3": "es_MX-cortanav3-17139-high.onnx",
-    "Español México    |  Ald (Medium)": "es_MX-ald-medium.onnx",
-    "Español Argentina |  Microsoft Elena": "es_MX-hircoirvoicev5-high.onnx",
-    "Español México    |  Hircoir v1": "es_MX-locutor-18488-epoch-high.onnx",
-# Modelos públicos de huggingface
-    "Español España    |  Carlfm (Low)": "es_ES-carlfm-x_low.onnx",
-    "Español España    |  Davefx (Medium)": "es_ES-davefx-medium.onnx",
-    "Español España    |  Mls 9972 (Low)": "es_ES-mls_9972-low.onnx",
-    "Español Españá    |  Mls 10246 (Low)": "es_ES-mls_10246-low.onnx",
-    "Español España    |  Sharvard (Medium)": "es_ES-sharvard-medium.onnx",
-    "English US    |  Lessac (High)": "en_US-lessac-high.onnx",
-    "English US    |  Amy (Medium)": "en_US-amy-medium.onnx",
-    "English US    |  Dany (Low)": "en_US-danny-low.onnx",
-    "English US    |  HFC Male": "en_US-hfc_male-medium.onnx",
-    "English US    |  Kusal (Medium)": "en_US-kusal-medium.onnx",
-    "English US    |  Joe (Medium)": "en_US-joe-medium.onnx",
-    "English US    |  12Arctic (Medium)": "en_US-l2arctic-medium.onnx",
-    "English US    |  LibriTTS (High)": "en_US-libritts-high.onnx"
+        "Español México    | Kamora Neuronal": {
+        "model_path": "es_ES-kamora-7539-high.onnx",
+        "replacements": [('\n', '. ')]
+    },
+    "Español México    | Claude": {
+        "model_path": "es_MX-claude-14947-epoch-high.onnx",
+        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
+    },
+    "Español México    | Cortana Infinite": {
+        "model_path": "es_MX-cortana-26284-high.onnx",
+        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
+    },
+    "Español México    | Ald (Medium)": {
+        "model_path": "es_MX-ald-medium.onnx",
+        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
+    },
+    "Español Argentina | Microsoft Elena": {
+        "model_path": "es_MX-hircoirvoicev5-high.onnx",
+        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
+    },
+    "Español México    | Hircoir v1": {
+        "model_path": "es_MX-locutor-18488-epoch-high.onnx",
+        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
+    },
+    "Español España    | Carlfm (Low)": {
+        "model_path": "es_ES-carlfm-x_low.onnx",
+        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
+    },
+    "Español España    | Davefx (Medium)": {
+        "model_path": "es_ES-davefx-medium.onnx",
+        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
+    },
+    "Español España    | Mls 9972 (Low)": {
+        "model_path": "es_ES-mls_9972-low.onnx",
+        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
+    },
+    "Español Españá    | Mls 10246 (Low)": {
+        "model_path": "es_ES-mls_10246-low.onnx",
+        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
+    },
+    "Español España    | Sharvard (Medium)": {
+        "model_path": "es_ES-sharvard-medium.onnx",
+        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
+    },
+    "English US    | Lessac (High)": {
+        "model_path": "en_US-lessac-high.onnx",
+        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
+    },
+    "English US    | Amy (Medium)": {
+        "model_path": "en_US-amy-medium.onnx",
+        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
+    },
+    "English US    | Dany (Low)": {
+        "model_path": "en_US-danny-low.onnx",
+        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
+    },
+    "English US    | HFC Male": {
+        "model_path": "en_US-hfc_male-medium.onnx",
+        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
+    },
+    "English US    | Kusal (Medium)": {
+        "model_path": "en_US-kusal-medium.onnx",
+        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
+    },
+    "English US    | Joe (Medium)": {
+        "model_path": "en_US-joe-medium.onnx",
+        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
+    },
+    "English US    | 12Arctic (Medium)": {
+        "model_path": "en_US-l2arctic-medium.onnx",
+        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
+    },
+    "English US    | LibriTTS (High)": {
+        "model_path": "en_US-libritts-high.onnx",
+        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
+    }
 }
+
+# Comprueba si los modelos definidos existen en la carpeta de modelos
+existing_models = [model_name for model_name in model_names.keys() if os.path.isfile(os.path.join(model_folder, model_names[model_name]["model_path"]))]
 
 def multiple_replace(text, replacements):
     # Iterar sobre cada par de remplazo
@@ -55,27 +114,34 @@ def multiple_replace(text, replacements):
         text = text.replace(old, new)
     return text
 
-def filter_text(text):
-    # Lista de remplazos a realizar
-    replacements = [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
-    
-    # Realizar remplazos
-    filtered_text = multiple_replace(text, replacements)
-    
-    # Escapar todos los caracteres especiales dentro de las comillas
-    filtered_text = re.sub(r'(["\'])', lambda m: "\\" + m.group(0), filtered_text)
-    
-    return filtered_text
+import re
+import logging
+
+def filter_text(text, model_name):
+    if model_name in model_names:
+        replacements = model_names[model_name]["replacements"]
+        # Realizar reemplazos específicos del modelo
+        filtered_text = multiple_replace(text, replacements)
+        # Escapar todos los caracteres especiales dentro de las comillas
+        filtered_text = re.sub(r'(["\'])', lambda m: "\\" + m.group(0), filtered_text)
+        return filtered_text
+    else:
+        logging.error(f"No se encontró el modelo '{model_name}'.")
+        return None
+
 
 # Define una función para convertir texto a voz
-def convert_text_to_speech(text, model):
-    filtered_text = filter_text(text)
+def convert_text_to_speech(text, model_name):
+    filtered_text = filter_text(text, model_name)[:500]  # Limitar el texto a 500 caracteres
+    if filtered_text is None:
+        return None
+
     random_name = ''.join(random.choices(string.ascii_letters + string.digits, k=8)) + '.wav'
     output_file = os.path.join(temp_audio_folder, random_name)
 
     if os.path.isfile(piper_binary_path):
-        if model in model_names:
-            model_path = os.path.join(model_folder, model_names[model])
+        if model_name in model_names:
+            model_path = os.path.join(model_folder, model_names[model_name]["model_path"])
             if os.path.isfile(model_path):
                 # Construye el comando para ejecutar Piper
                 command = f'echo "{filtered_text}" | "{piper_binary_path}" -m {model_path} -f {output_file}'
@@ -86,10 +152,10 @@ def convert_text_to_speech(text, model):
                     logging.error(f"Error al ejecutar el comando: {e}")
                     return None
             else:
-                logging.error(f"Modelo '{model}' no encontrado en la ubicación especificada.")
+                logging.error(f"Modelo '{model_name}' no encontrado en la ubicación especificada.")
                 return None
         else:
-            logging.error(f"No se ha asignado un modelo para el nombre '{model}'.")
+            logging.error(f"No se ha asignado un modelo para el nombre '{model_name}'.")
             return None
     else:
         logging.error(f"No se encontró el binario de Piper en la ubicación especificada.")
@@ -126,7 +192,7 @@ def restrict_access(func):
 
 @app.route('/')
 def index():
-    model_options = [name for name, model in model_names.items() if os.path.isfile(os.path.join(model_folder, model))]
+    model_options = existing_models
     # Registra el contenido de la carpeta actual
     logging.info("Contents of current folder: %s", os.listdir(file_folder))
     return render_template('index.html', model_options=model_options)
@@ -136,8 +202,8 @@ def index():
 @rate_limit(1)  # Limita las solicitudes a 1 por segundo
 def convert_text():
     text = request.form['text']
-    model = request.form['model']
-    output_file = convert_text_to_speech(text, model)
+    model_name = request.form['model']
+    output_file = convert_text_to_speech(text, model_name)
 
     @after_this_request
     def remove_file(response):
