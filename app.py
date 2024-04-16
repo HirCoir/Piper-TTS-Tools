@@ -30,7 +30,7 @@ model_names = {
         "Español México    | Kamora Neuronal": {
         "model_path": "kamora.onnx",
         "replacements": [('\n', '. ')]
-    }""""",
+    },
     "Español México    | Claude": {
         "model_path": "es_MX-claude-14947-epoch-high.onnx",
         "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
@@ -102,7 +102,7 @@ model_names = {
     "English US    | LibriTTS (High)": {
         "model_path": "en_US-libritts-high.onnx",
         "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
-    }"""""
+    }
 }
 
 # Comprueba si los modelos definidos existen en la carpeta de modelos
