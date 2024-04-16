@@ -12,13 +12,14 @@ RUN pip install --upgrade pip \
     && pip install flask -U "huggingface_hub[cli]"
 
 # Comprueba si TOKEN_HUGGINGFACE tiene un valor antes de ejecutar la línea RUN
-RUN if [ -z "$TOKEN_HUGGINGFACE" ]; then \
-    echo "No hubo TOKEN_HUGGINGFACE, no se guarda."; \
+RUN if [ -z "$REPO_HUGGINGFACE" ]; then \
+    mkdir -p /home/app/models; \
+    echo "No hubo REPO_HUGGINGFACE, carpeta creada en /home/app/models."; \
 else \
-    echo "Se ha guardado el TOKEN."; \
-    mkdir /root/.cache; mkdir /root/.cache/huggingface/; \
-    echo $TOKEN_HUGGINGFACE > /root/.cache/huggingface/token; \
+    mkdir -p /home/app/models; \
+    huggingface-cli download $REPO_HUGGINGFACE --local-dir /home/app/models; \
 fi
+
 
 # Create the application user and set the workspace
 RUN useradd -m -u 1000 app
