@@ -2,11 +2,11 @@ import logging
 import os
 import random
 import re
+import shlex
 import string
 import subprocess
 import time
 import base64
-import shlex  # Importar shlex para escapar caracteres especiales en el comando
 
 from flask import Flask, render_template, request, jsonify, after_this_request, send_from_directory
 from functools import wraps
@@ -104,7 +104,6 @@ model_names = {
         "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
     }
 }
-
 # Comprueba si los modelos definidos existen en la carpeta de modelos
 existing_models = [model_name for model_name in model_names.keys() if os.path.isfile(os.path.join(model_folder, model_names[model_name]["model_path"]))]
 
@@ -119,10 +118,8 @@ def filter_text(text, model_name):
         replacements = model_names[model_name]["replacements"]
         # Realizar reemplazos específicos del modelo
         filtered_text = multiple_replace(text, replacements)
-        # Escapar todos los caracteres especiales dentro de las comillas
-        filtered_text = re.sub(r'(["\'])', lambda m: "\\" + m.group(0), filtered_text)
-        # Utilizar shlex para escapar caracteres especiales en piper
-        filtered_text = shlex.quote(filtered_text)
+        # Utilizar shlex para permitir caracteres especiales en piper
+        filtered_text = ' '.join(shlex.quote(token) for token in filtered_text.split())
         return filtered_text
     else:
         logging.error(f"No se encontró el modelo '{model_name}'.")
@@ -140,7 +137,7 @@ def convert_text_to_speech(text, model_name):
         model_path = os.path.join(model_folder, model_names[model_name]["model_path"])
         if os.path.isfile(model_path):
             # Construye el comando para ejecutar Piper
-            command = f'echo {filtered_text} | {piper_binary_path} -m {model_path} -f {output_file}'
+            command = f'echo "{filtered_text}" | tr -d "\n" | "{piper_binary_path}" -m {model_path} -f {output_file}'
             try:
                 subprocess.run(command, shell=True, check=True)
                 return output_file
