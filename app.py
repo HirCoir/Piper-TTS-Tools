@@ -28,7 +28,7 @@ os.makedirs(temp_audio_folder, exist_ok=True)
 # Define los nombres asignados a modelos específicos, en caso de no existir no se muestran
 model_names = {
         "Español México    | Kamora Neuronal": {
-        "model_path": "es_ES-kamora-7539-high.onnx",
+        "model_path": "kamora.onnx",
         "replacements": [('\n', '. ')]
     },
     "Español México    | Claude": {
