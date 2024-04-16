@@ -132,7 +132,7 @@ def filter_text(text, model_name):
 
 # Define una función para convertir texto a voz
 def convert_text_to_speech(text, model_name):
-    filtered_text = filter_text(text, model_name)[:500]  # Limitar el texto a 500 caracteres
+    filtered_text = filter_text(text, model_name)[:3000]  # Limitar el texto a 500 caracteres
     if filtered_text is None:
         return None
 
