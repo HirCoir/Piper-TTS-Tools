@@ -1,4 +1,4 @@
-FROM python:3.10
+FROM python:3.12
 
 # Define the Hugging Face token as a build argument
 #ARG TOKEN_HUGGINGFACE=${TOKEN_HUGGINGFACE}
