@@ -27,8 +27,8 @@ if not os.path.exists(temp_audio_folder):
 
 # Define los nombres asignados a modelos específicos, en caso de no existir no se muestran
 model_names = {
-    "Español México    | Kamora Neuronal": {
-        "model_path": "kamora.onnx",
+        "Español México    | Kamora Neuronal": {
+        "model_path": "es_ES-kamora-7539-high.onnx",
         "replacements": [('\n', '. ')]
     },
     "Español México    | Claude": {
@@ -106,11 +106,7 @@ model_names = {
 }
 
 # Comprueba si los modelos definidos existen en la carpeta de modelos
-existing_models = []
-for model_name, model_data in model_names.items():
-    model_path = os.path.join(model_folder, model_data["model_path"])
-    if os.path.isfile(model_path):
-        existing_models.append(model_name)
+existing_models = [model_name for model_name in model_names.keys() if os.path.isfile(os.path.join(model_folder, model_names[model_name]["model_path"]))]
 
 def multiple_replace(text, replacements):
     # Iterar sobre cada par de remplazo
@@ -132,6 +128,7 @@ def filter_text(text, model_name):
     else:
         logging.error(f"No se encontró el modelo '{model_name}'.")
         return None
+
 
 # Define una función para convertir texto a voz
 def convert_text_to_speech(text, model_name):
