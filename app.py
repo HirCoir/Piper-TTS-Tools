@@ -118,12 +118,14 @@ def filter_text(text, model_name):
         replacements = model_names[model_name]["replacements"]
         # Realizar reemplazos específicos del modelo
         filtered_text = multiple_replace(text, replacements)
-        # Utilizar shlex para permitir caracteres especiales en piper
-        filtered_text = ' '.join(shlex.quote(token) for token in filtered_text.split())
+        # Dividir el texto en tokens y luego usar shlex.quote() en cada token
+        tokens = filtered_text.split()
+        filtered_text = ' '.join(shlex.quote(token) for token in tokens)
         return filtered_text
     else:
         logging.error(f"No se encontró el modelo '{model_name}'.")
         return None
+
 
 def convert_text_to_speech(text, model_name):
     filtered_text = filter_text(text, model_name)[:3000]  # Limitar el texto a 3000 caracteres
