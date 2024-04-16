@@ -1,5 +1,5 @@
 # Define the base image, Python 3.12
-FROM python:3.10
+FROM python:3.12
 
 # Define the Hugging Face token as a build argument
 ARG TOKEN_HUGGINGFACE=${TOKEN_HUGGINGFACE}
@@ -12,12 +12,13 @@ RUN pip install --upgrade pip \
     && pip install flask -U "huggingface_hub[cli]"
 
 # Comprueba si TOKEN_HUGGINGFACE tiene un valor antes de ejecutar la línea RUN
-RUN if [ -z "$REPO_HUGGINGFACE" ]; then \
-    echo "No hubo REPO_HUGGINGFACE, no se realiza la descarga."; \
+RUN if [ -z "$TOKEN_HUGGINGFACE" ]; then \
+    echo "No hubo TOKEN_HUGGINGFACE, no se guarda."; \
 else \
-    mkdir -p /home/app/models && cd /home/app/models && huggingface-cli download $REPO_HUGGINGFACE --local-dir .; \
+    echo "Se ha guardado el TOKEN."; \
+    mkdir /root/.cache; mkdir /root/.cache/huggingface/; \
+    echo $TOKEN_HUGGINGFACE > /root/.cache/huggingface/token; \
 fi
-
 
 # Create the application user and set the workspace
 RUN useradd -m -u 1000 app
@@ -43,7 +44,7 @@ ARG REPO_HUGGINGFACE=${REPO_HUGGINGFACE}
 RUN if [ -z "$REPO_HUGGINGFACE" ]; then \
     echo "No hubo REPO_HUGGINGFACE, no se realiza la descarga."; \
 else \
-    mkdir /home/app/models && cd /home/app/models; huggingface-cli download $REPO_HUGGINGFACE --local-dir .; \
+    huggingface-cli download $REPO_HUGGINGFACE --local-dir /home/app/models; \
 fi
 
 # Download public models from HuggingFace
