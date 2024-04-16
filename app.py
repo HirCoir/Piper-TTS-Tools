@@ -27,7 +27,7 @@ if not os.path.exists(temp_audio_folder):
 
 # Define los nombres asignados a modelos específicos, en caso de no existir no se muestran
 model_names = {
-        "Español México    | Kamora Neuronal": {
+    "Español México    | Kamora Neuronal": {
         "model_path": "kamora.onnx",
         "replacements": [('\n', '. ')]
     },
@@ -105,8 +105,8 @@ model_names = {
     }
 }
 
-# Comprueba si los modelos definidos existen en la carpeta de modelos
-existing_models = [model_name for model_name in model_names.keys() if os.path.isfile(os.path.join(model_folder, model_names[model_name]["model_path"]))]
+# Filtra los modelos definidos para incluir solo aquellos cuyos archivos asociados existen en la carpeta model_folder
+existing_models = [model_name for model_name, model_info in model_names.items() if os.path.isfile(os.path.join(model_folder, model_info["model_path"]))]
 
 def multiple_replace(text, replacements):
     # Iterar sobre cada par de remplazo
@@ -192,11 +192,10 @@ def restrict_access(func):
 
 @app.route('/')
 def index():
-    # Filtra los modelos existentes
     model_options = existing_models
-    logging.info("Contenido de la carpeta actual: %s", os.listdir(file_folder))
+    # Registra el contenido de la carpeta actual
+    logging.info("Contents of current folder: %s", os.listdir(file_folder))
     return render_template('index.html', model_options=model_options)
-
 
 @app.route('/convert', methods=['POST'])
 @restrict_access
