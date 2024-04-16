@@ -192,10 +192,11 @@ def restrict_access(func):
 
 @app.route('/')
 def index():
+    # Filtra los modelos existentes
     model_options = existing_models
-    # Registra el contenido de la carpeta actual
-    logging.info("Contents of current folder: %s", os.listdir(file_folder))
+    logging.info("Contenido de la carpeta actual: %s", os.listdir(file_folder))
     return render_template('index.html', model_options=model_options)
+
 
 @app.route('/convert', methods=['POST'])
 @restrict_access
