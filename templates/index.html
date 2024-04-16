@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -15,7 +14,7 @@
     <meta property="og:url" content="https://tts.hircoir.eu.org" />
     <meta property="og:image" content="https://tts.hircoir.eu.org/image.jpg" />
     
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('favicon') }}">
     <style>
 body {
     background-color: rgba(45, 45, 45, 0.4);
@@ -370,31 +369,15 @@ footer {
     padding: 10px 0;
 }
   </style>
-<script nonce="db322ea1-c18f-49a7-b3d5-10e442b3f8a4">try{(function(w,d){!function(kL,kM,kN,kO){kL[kN]=kL[kN]||{};kL[kN].executed=[];kL.zaraz={deferred:[],listeners:[]};kL.zaraz.q=[];kL.zaraz._f=function(kP){return async function(){var kQ=Array.prototype.slice.call(arguments);kL.zaraz.q.push({m:kP,a:kQ})}};for(const kR of["track","set","debug"])kL.zaraz[kR]=kL.zaraz._f(kR);kL.zaraz.init=()=>{var kS=kM.getElementsByTagName(kO)[0],kT=kM.createElement(kO),kU=kM.getElementsByTagName("title")[0];kU&&(kL[kN].t=kM.getElementsByTagName("title")[0].text);kL[kN].x=Math.random();kL[kN].w=kL.screen.width;kL[kN].h=kL.screen.height;kL[kN].j=kL.innerHeight;kL[kN].e=kL.innerWidth;kL[kN].l=kL.location.href;kL[kN].r=kM.referrer;kL[kN].k=kL.screen.colorDepth;kL[kN].n=kM.characterSet;kL[kN].o=(new Date).getTimezoneOffset();if(kL.dataLayer)for(const kY of Object.entries(Object.entries(dataLayer).reduce(((kZ,k$)=>({...kZ[1],...k$[1]})),{})))zaraz.set(kY[0],kY[1],{scope:"page"});kL[kN].q=[];for(;kL.zaraz.q.length;){const la=kL.zaraz.q.shift();kL[kN].q.push(la)}kT.defer=!0;for(const lb of[localStorage,sessionStorage])Object.keys(lb||{}).filter((ld=>ld.startsWith("_zaraz_"))).forEach((lc=>{try{kL[kN]["z_"+lc.slice(7)]=JSON.parse(lb.getItem(lc))}catch{kL[kN]["z_"+lc.slice(7)]=lb.getItem(lc)}}));kT.referrerPolicy="origin";kT.src="/cdn-cgi/zaraz/s.js?z="+btoa(encodeURIComponent(JSON.stringify(kL[kN])));kS.parentNode.insertBefore(kT,kS)};["complete","interactive"].includes(kM.readyState)?zaraz.init():kL.addEventListener("DOMContentLoaded",zaraz.init)}(w,d,"zarazData","script");})(window,document)}catch(e){throw fetch("/cdn-cgi/zaraz/t"),e;};</script></head>
+</head>
 <body>
     <h1>Convertidor de Texto a Audio</h1>
     <form id="conversion-form">
         <label for="model">Selecciona el modelo.</label><br>
         <select id="model" name="model">
-            
-            <option value="Español México    | Kamora Neuronal">Español México    | Kamora Neuronal</option>
-            
-            <option value="Español México    | Claude">Español México    | Claude</option>
-            
-            <option value="Español México    | Cortana Infinite">Español México    | Cortana Infinite</option>
-            
-            <option value="Español Argentina | Microsoft Elena">Español Argentina | Microsoft Elena</option>
-            
-            <option value="Español México    | Hircoir v1">Español México    | Hircoir v1</option>
-            
-            <option value="Español España    | Davefx (Medium)">Español España    | Davefx (Medium)</option>
-            
-            <option value="Español España    | Sharvard (Medium)">Español España    | Sharvard (Medium)</option>
-            
-            <option value="English US    | Lessac (High)">English US    | Lessac (High)</option>
-            
-            <option value="English US    | LibriTTS (High)">English US    | LibriTTS (High)</option>
-            
+            {% for model in model_options %}
+            <option value="{{ model }}">{{ model }}</option>
+            {% endfor %}
         </select><br>
         <div class="loader">
           <div>
@@ -433,7 +416,7 @@ footer {
           </div>
         </div>
         <br><span>Escriba su texto a convertir a voz.</span><br>
-        <textarea placeholder="Escribe tu texto aquí." id="text" name="text" rows="4" maxlength="500" minlength="2"></textarea>
+        <textarea placeholder="Escribe tu texto aquí." id="text" name="text" rows="4" minlength="2"></textarea>
         <br>
         <button type="submit" class="animated-button">
             <svg viewBox="0 0 24 24" class="arr-2" xmlns="http://www.w3.org/2000/svg">
