@@ -6,7 +6,6 @@ import string
 import subprocess
 import time
 import base64
-import shlex  # Importa shlex para manejar la sintaxis de shell
 
 from flask import Flask, render_template, request, jsonify, after_this_request, send_from_directory
 from functools import wraps
@@ -118,6 +117,8 @@ def filter_text(text, model_name):
         replacements = model_names[model_name]["replacements"]
         # Realizar reemplazos específicos del modelo
         filtered_text = multiple_replace(text, replacements)
+        # Escapar todos los caracteres especiales dentro de las comillas
+        filtered_text = re.sub(r'(["\'])', lambda m: "\\" + m.group(0), filtered_text)
         return filtered_text
     else:
         logging.error(f"No se encontró el modelo '{model_name}'.")
@@ -135,8 +136,7 @@ def convert_text_to_speech(text, model_name):
         model_path = os.path.join(model_folder, model_names[model_name]["model_path"])
         if os.path.isfile(model_path):
             # Construye el comando para ejecutar Piper
-            # Utiliza shlex para manejar la sintaxis de shell y permite caracteres especiales
-            command = f'echo "{filtered_text}" | {shlex.quote(piper_binary_path)} -m {shlex.quote(model_path)} -f {shlex.quote(output_file)}'
+            command = f'echo "{filtered_text}" | "{piper_binary_path}" -m {model_path} -f {output_file}'
             try:
                 subprocess.run(command, shell=True, check=True)
                 return output_file
@@ -158,7 +158,7 @@ def rate_limit(limit):
                 wrapper.last_execution = 0
             elapsed_time = time.time() - wrapper.last_execution
             if elapsed_time < limit:
-                return jsonify({'error': 'Demasiadas solicitudes. Por favor, inténtelo de nuevo más tarde.'}), 429
+                return jsonify({'error': 'Too many requests. Please try again later.'}), 429
             wrapper.last_execution = time.time()
             return func(*args, **kwargs)
         return wrapper
@@ -181,7 +181,7 @@ def restrict_access(func):
 def index():
     model_options = existing_models
     # Registra el contenido de la carpeta actual
-    logging.info("Contenido de la carpeta actual: %s", os.listdir(file_folder))
+    logging.info("Contents of current folder: %s", os.listdir(file_folder))
     return render_template('index.html', model_options=model_options)
 
 @app.route('/convert', methods=['POST'])
@@ -196,9 +196,9 @@ def convert_text():
     def remove_file(response):
         try:
             os.remove(output_file)
-            logging.info("Archivo de audio eliminado: %s", output_file)
+            logging.info("Audio file deleted: %s", output_file)
         except Exception as error:
-            logging.error("Error al eliminar el archivo: %s", error)
+            logging.error("Error deleting file: %s", error)
         return response
 
     if output_file is not None:
