@@ -105,8 +105,12 @@ model_names = {
     }
 }
 
-# Filtra los modelos definidos para incluir solo aquellos cuyos archivos asociados existen en la carpeta model_folder
-existing_models = [model_name for model_name, model_info in model_names.items() if os.path.isfile(os.path.join(model_folder, model_info["model_path"]))]
+# Comprueba si los modelos definidos existen en la carpeta de modelos
+existing_models = []
+for model_name, model_data in model_names.items():
+    model_path = os.path.join(model_folder, model_data["model_path"])
+    if os.path.isfile(model_path):
+        existing_models.append(model_name)
 
 def multiple_replace(text, replacements):
     # Iterar sobre cada par de remplazo
@@ -128,7 +132,6 @@ def filter_text(text, model_name):
     else:
         logging.error(f"No se encontró el modelo '{model_name}'.")
         return None
-
 
 # Define una función para convertir texto a voz
 def convert_text_to_speech(text, model_name):
