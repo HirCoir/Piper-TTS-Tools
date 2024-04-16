@@ -46,7 +46,6 @@ RUN if [ -z "$REPO_HUGGINGFACE" ]; then \
 else \
     mkdir /home/app/models && cd /home/app/models; huggingface-cli download $REPO_HUGGINGFACE --local-dir /home/app/models; \
 fi
-RUN mkdir /home/app/models; cd /home/app/models; wget https://huggingface.co/spaces/HirCoir/Piper-TTS-Spanish/resolve/main/es_MX-claude-14947-epoch-high.onnx; wget https://huggingface.co/spaces/HirCoir/Piper-TTS-Spanish/resolve/main/es_MX-claude-14947-epoch-high.onnx.json
 # Expose the port and switch back to the application user
 EXPOSE 7860
 USER root
