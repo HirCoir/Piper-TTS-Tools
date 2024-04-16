@@ -22,12 +22,11 @@ model_folder = os.path.join(file_folder, 'models')
 piper_binary_path = os.path.join(file_folder, 'piper', 'piper')
 
 # Crea la carpeta temp_audio si no existe
-if not os.path.exists(temp_audio_folder):
-    os.makedirs(temp_audio_folder)
+os.makedirs(temp_audio_folder, exist_ok=True)
 
 # Define los nombres asignados a modelos específicos, en caso de no existir no se muestran
 model_names = {
-        "Español México    | Kamora Neuronal": {
+    "Español México    | Kamora Neuronal": {
         "model_path": "es_ES-kamora-7539-high.onnx",
         "replacements": [('\n', '. ')]
     },
@@ -114,9 +113,6 @@ def multiple_replace(text, replacements):
         text = text.replace(old, new)
     return text
 
-import re
-import logging
-
 def filter_text(text, model_name):
     if model_name in model_names:
         replacements = model_names[model_name]["replacements"]
@@ -129,39 +125,32 @@ def filter_text(text, model_name):
         logging.error(f"No se encontró el modelo '{model_name}'.")
         return None
 
-
-# Define una función para convertir texto a voz
 def convert_text_to_speech(text, model_name):
-    filtered_text = filter_text(text, model_name)[:3000]  # Limitar el texto a 500 caracteres
+    filtered_text = filter_text(text, model_name)[:3000]  # Limitar el texto a 3000 caracteres
     if filtered_text is None:
         return None
 
     random_name = ''.join(random.choices(string.ascii_letters + string.digits, k=8)) + '.wav'
     output_file = os.path.join(temp_audio_folder, random_name)
 
-    if os.path.isfile(piper_binary_path):
-        if model_name in model_names:
-            model_path = os.path.join(model_folder, model_names[model_name]["model_path"])
-            if os.path.isfile(model_path):
-                # Construye el comando para ejecutar Piper
-                command = f'echo "{filtered_text}" | "{piper_binary_path}" -m {model_path} -f {output_file}'
-                try:
-                    subprocess.run(command, shell=True, check=True)
-                    return output_file
-                except subprocess.CalledProcessError as e:
-                    logging.error(f"Error al ejecutar el comando: {e}")
-                    return None
-            else:
-                logging.error(f"Modelo '{model_name}' no encontrado en la ubicación especificada.")
+    if os.path.isfile(piper_binary_path) and model_name in model_names:
+        model_path = os.path.join(model_folder, model_names[model_name]["model_path"])
+        if os.path.isfile(model_path):
+            # Construye el comando para ejecutar Piper
+            command = f'echo "{filtered_text}" | "{piper_binary_path}" -m {model_path} -f {output_file}'
+            try:
+                subprocess.run(command, shell=True, check=True)
+                return output_file
+            except subprocess.CalledProcessError as e:
+                logging.error(f"Error al ejecutar el comando: {e}")
                 return None
         else:
-            logging.error(f"No se ha asignado un modelo para el nombre '{model_name}'.")
+            logging.error(f"Modelo '{model_name}' no encontrado en la ubicación especificada.")
             return None
     else:
         logging.error(f"No se encontró el binario de Piper en la ubicación especificada.")
         return None
 
-# Define una función decoradora para limitar la velocidad de las solicitudes
 def rate_limit(limit):
     def decorator(func):
         @wraps(func)
@@ -176,7 +165,6 @@ def rate_limit(limit):
         return wrapper
     return decorator
 
-# Define una función decoradora para restringir el acceso a la ruta /convert
 def restrict_access(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
