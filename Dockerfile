@@ -44,7 +44,7 @@ ARG REPO_HUGGINGFACE=${REPO_HUGGINGFACE}
 RUN if [ -z "$REPO_HUGGINGFACE" ]; then \
     echo "No hubo REPO_HUGGINGFACE, no se realiza la descarga."; \
 else \
-    mkdir models && cd models; huggingface-cli download $REPO_HUGGINGFACE --local-dir .; \
+    mkdir /home/app/models && cd /home/app/models; huggingface-cli download $REPO_HUGGINGFACE --local-dir .; \
 fi
 
 # Download public models from HuggingFace
