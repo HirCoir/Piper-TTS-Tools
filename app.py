@@ -16,15 +16,11 @@ model_folder = "/home/app/models/"
 
 # Define los nombres asignados a modelos específicos, en caso de no existir no se muestran
 model_names = {
-    "kamora": {
-        "model_path": "es_MX-kamora-tiny-x-low.onnx",
+    "sorah": {
+        "model_path": "es_US-sorah.onnx",
         "replacements": [('\n', '. '),('*', '')]
     },
-    "sorah": {
-        "model_path": "es_MX-sorah.onnx",
-        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
-    },
-    "kamora-v2": {
+    "kamora": {
         "model_path": "kamora.onnx",
         "replacements": [('\n', '. '),('*', '')]
     }
