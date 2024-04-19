@@ -20,8 +20,8 @@ model_names = {
         "model_path": "es_MX-kamora-tiny-x-low.onnx",
         "replacements": [('\n', '. '),('*', '')]
     },
-    "claude": {
-        "model_path": "es_MX-claude-14947-epoch-high.onnx",
+    "sorah": {
+        "model_path": "es_MX-sorah.onnx",
         "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
     },
     "kamora-v2": {
