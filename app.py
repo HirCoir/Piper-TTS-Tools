@@ -28,11 +28,11 @@ os.makedirs(temp_audio_folder, exist_ok=True)
 model_names = {
     "Español México | Sorah Neuronal": {
         "model_path": "es_MX-sorah-high.onnx",
-        "replacements": [('\n', ''), ('*', '')]
+        "replacements": [('\n', ' . '), ('*', '')]
     },
     "Español México | Emma Neuronal": {
         "model_path": "es_MX-emma-high.onnx",
-        "replacements": [('\n', ''), ('*', '')]
+        "replacements": [('\n', ' . '), ('*', '')]
     },
     "Español México | Kamora Neuronal": {
         "model_path": "kamora.onnx",
