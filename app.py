@@ -26,17 +26,17 @@ os.makedirs(temp_audio_folder, exist_ok=True)
 
 # Define los nombres asignados a modelos específicos, en caso de no existir no se muestran
 model_names = {
-    "Español México | Sorah": {
+    "Español México | Sorah Neuronal": {
         "model_path": "es_MX-sorah.onnx",
-        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
+        "replacements": [('\n', ''), ('*', '')]
+    },
+    "Español México | Kamora Neuronal": {
+        "model_path": "kamora.onnx",
+        "replacements": [('\n', ''), ('*', '')]
     },
     "Español México | Voz HirCoir": {
         "model_path": "es_MX-locutor-18488-epoch-high.onnx",
         "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
-    },
-    "Español México | Kamora Neuronal": {
-        "model_path": "kamora.onnx",
-        "replacements": [('\n', '')]
     },
     "Español México    | Claude": {
         "model_path": "es_MX-claude-14947-epoch-high.onnx",
