@@ -10,7 +10,7 @@ ARG REPO_HUGGINGFACE={REPO_HUGGINGFACE}
 ENV DOWNLOAD_URL_BASE=https://github.com/rhasspy/piper/releases/download/2023.11.14-2/
 
 # Instala el cliente de Hugging Face y las dependencias necesarias
-RUN apk add --no-cache --virtual .build-deps gcc musl-dev curl && \
+RUN apk add --no-cache --virtual .build-deps gcc musl-dev curl wget && \
     pip install --upgrade pip && \
     pip install flask -U "huggingface_hub[cli]" && \
     apk del .build-deps
