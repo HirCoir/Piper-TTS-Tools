@@ -17,7 +17,15 @@ model_folder = "/home/app/models/"
 # Define los nombres asignados a modelos específicos, en caso de no existir no se muestran
 model_names = {
     "sorah": {
-        "model_path": "es_MX-sorah.onnx",
+        "model_path": "es_MX-sorah-high.onnx",
+        "replacements": [('\n', '. '),('*', '')]
+    },
+    "emma": {
+        "model_path": "es_MX-emma-high.onnx",
+        "replacements": [('\n', '. '),('*', '')]
+    },
+    "hircoir": {
+        "model_path": "es_MX-hircoir-22479-high.onnx",
         "replacements": [('\n', '. '),('*', '')]
     },
     "kamora": {
