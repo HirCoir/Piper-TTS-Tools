@@ -5,6 +5,7 @@ import string
 import subprocess
 import base64
 import logging
+import shlex
 from flask import Flask, request, jsonify
 
 app = Flask(__name__)
