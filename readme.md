@@ -1,25 +1,24 @@
 # Piper TTS Flask API
 
-This Flask API allows you to convert text to speech using the [PIPER](https://github.com/rhasspy/piper) text to speech engine. Piper is a fast and local neural text to speech system optimized for Raspberry Pi 4. The API supports several languages, and the voices are trained with VITS and then exported to onnxruntime.
-
+This Flask API allows you to convert text to speech using the [PIPER](https://github.com/rhasspy/piper) text-to-speech engine. Piper is a fast, local neural text-to-speech system optimized for Raspberry Pi 4. The API supports multiple languages, and the voices are trained with VITS and then exported to onnxruntime.
 
 Each voice requires two files:
 
 - A .onnx model file (e.g., en_US-lessac-medium.onnx)
-- A .onnx.json config file (e.g., en_US-lessac-medium.onnx.json)
+- An .onnx.json configuration file (e.g., en_US-lessac-medium.onnx.json)
 
-The API supports several languages, and the voices are trained with VITS and then exported to onnxruntime. The Piper TTS API allows to choose different voices from the [community-created voices](https://huggingface.co/rhasspy/piper-voices/tree/main) in the HuggingFace repository.
+The API supports multiple languages, and the voices are trained with VITS and then exported to onnxruntime. The Piper TTS API allows you to choose different voices from the [community-created voices](https://huggingface.co/rhasspy/piper-voices/tree/main) on the HuggingFace repository.
 
-The application uses the community-created voices from the HuggingFace repository of rhasspy, the creator of Piper. Models can be easily added and listed using the format in the app.py
+The application uses community-created voices from Rhasspy's HuggingFace repository, the creator of Piper. Models can be easily added and listed using the format in the app.py file.
 
 ```python
 "kamora": {
-        "model_path": "es_MX-kamora-tiny-x-low.onnx",
-        "replacements": [('\n', '. '),('*', '')]
-    }
+    "model_path": "es_MX-kamora-tiny-x-low.onnx",
+    "replacements": [('\n', '. '), ('*', '')]
+}
 ```
-where "Kamora" is the name shown to the user when accessing /models. 
-The model_path "es_MX-kamora-tiny-x-low.onnx" is the specific filename of your model in the models folder. The "replacements" field inside the model dictionary is to replace specific elements in the text before sending it to the model in case your model might not omit certain characters such as periods, exclamation marks, and others to be replaced by a comma to give a pause.
+Where "kamora" is the name displayed to the user when accessing /models.
+The "model_path" "es_MX-kamora-tiny-x-low.onnx" is the specific file name of your model in the models folder. The "replacements" field within the model dictionary is for replacing specific elements in the text before sending it to the model in case your model does not handle certain characters like periods, exclamation marks, and others, which should be replaced with a comma to introduce a pause.
 
 The following is an example of the "replacements" field:
 
@@ -33,22 +32,76 @@ This replaces the following:
 - `?` with `,`
 - `¿` with `,`
 - `:` with `,`
-- `\n` with ` ` 
+- `\n` with ` `
 
-NOTE: The mentioned replacements (`('\n', '. '),('*', '')`) must always be added and they are necessary for the functionality of the Piper binary.
+NOTE: The mentioned replacements (`('\n', '. '),('*', '')`) should always be added and are necessary for the functionality of Piper's binary.
 
-The MODEL_CARD file contains important licensing information. Please review it carefully as some voices may have restrictive licenses.
+The MODEL_CARD file contains important license information. Please review it carefully, as some voices may have restrictive licenses.
+
+### Setting a Secret Key in Linux to Access the API
+
+To protect your API and allow only requests with a valid token to access it, you can set up a secret key in your Linux system and then use it in your code. Here is how to do it step by step:
+
+#### Configure the Secret Key
+
+1. **Set a secret key** that only you will know. This key can be set in an environment variable called `SECRET_KEY` in your Linux system.
+
+2. **Define the environment variable**:
+
+   You can define the `SECRET_KEY` variable in various ways in your system:
+
+   - **Temporarily in a terminal session**:
+
+     In the terminal, you can set the variable using the following command:
+     ```shell
+     export SECRET_KEY="your_secret_key"
+     ```
+
+     The variable will only be available in the current terminal session. Once you close the session, the variable will no longer be available.
+
+   - **Permanently**:
+
+     To make the variable persistent across sessions, you need to add it to an environment configuration file. For example, in **`~/.bashrc`** or **`~/.profile`**.
+
+     Open one of these files in a text editor, for example, `nano`:
+     ```shell
+     nano ~/.bashrc
+     ```
+
+     Add the following line at the end of the file:
+     ```shell
+     export SECRET_KEY="your_secret_key"
+     ```
+
+     Save and close the file. Then, refresh your terminal configuration:
+     ```shell
+     source ~/.bashrc
+     ```
+
+3. **Verify that the environment variable is set**:
+
+   You can verify that the `SECRET_KEY` variable is set correctly with the following command:
+   ```shell
+   echo $SECRET_KEY
+   ```
+
+   This command should display the secret key you configured.
 
 ## API Usage Examples
 
-The API supports multiple programming languages: 
+The API supports multiple programming languages:
 
-### Node.js 
+### Node.js
 
 ```node
 const axios = require('axios');
+const fs = require('fs');
 
 const url = 'http://127.0.0.1:7860/convert';
+
+// Authentication token (replace 'your_secret_token' with your secret key)
+const token = 'your_secret_token';
+
 const data = {
     text: "This is an example text\nwith multiple line breaks\nto test the functionality\nof the client code.",
     model: "kamora"
@@ -56,18 +109,20 @@ const data = {
 
 axios.post(url, data, {
     headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
     }
 })
 .then(response => {
     const audioBase64 = response.data.audio_base64;
     const audioBytes = Buffer.from(audioBase64, 'base64');
 
-    require('fs').writeFileSync('output.wav', audioBytes);
+    // Save the audio file
+    fs.writeFileSync('output.wav', audioBytes);
     console.log('Audio saved as output.wav');
 })
 .catch(error => {
-    console.error('Error obtaining the audio:', error.response.status);
+    console.error('Error obtaining audio:', error.response.status);
 });
 ```
 
@@ -78,19 +133,28 @@ import requests
 import base64
 import json
 
+# API URL
 url = 'http://127.0.0.1:7860/convert'
-headers = {'Content-Type': 'application/json'}
 
-# Text with line breaks
+# Authentication token (replace 'your_secret_token' with your secret key)
+token = 'your_secret_token'
+
+# Add the token to the request headers
+headers = {
+    'Content-Type': 'application/json',
+    'Authorization': f'Bearer {token}'
+}
+
+# Text data with line breaks and model to use
 data = {
     "text": "This is an example text\nwith multiple line breaks\nto test the functionality\nof the client code.",
     "model": "kamora"
 }
 
-# Convert to JSON
+# Convert the data to JSON
 data_json = json.dumps(data)
 
-# Send request to the Flask server
+# Send the POST request to the Flask server
 response = requests.post(url, headers=headers, data=data_json)
 
 # Handle the response
@@ -99,11 +163,12 @@ if response.status_code == 200:
     audio_base64 = response_data['audio_base64']
     audio_bytes = base64.b64decode(audio_base64)
 
+    # Save the audio file
     with open('output.wav', 'wb') as f:
         f.write(audio_bytes)
     print('Audio saved as output.wav')
 else:
-    print('Error obtaining the audio:', response.status_code)
+    print('Error obtaining audio:', response.status_code)
 ```
 
 ### Curl
@@ -112,22 +177,22 @@ else:
 curl -X POST \
   http://127.0.0.1:7860/convert \
   -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer your_secret_token' \
   -d '{
     "text": "This is an example text\nwith multiple line breaks\nto test the functionality\nof the client code.",
     "model": "kamora"
   }'
-
 ```
 
 ## Building the Docker Image
 
-The Docker image for this project can be built using the Dockerfile provided. The Dockerfile defines a base image, installs the required packages, and sets up the environment for the application.
+The Docker image for this project can be built using the provided Dockerfile. The Dockerfile defines a base image, installs the required packages, and sets up the environment for the application.
 
-The Dockerfile includes instructions for managing environment variables, which can be used to download your personal models if you have any. 
+The Dockerfile includes instructions for handling environment variables, which can be used to download your personal models if you have any.
 
-- `TOKEN_HUGGINGFACE` should be used to set the Hugging Face token. This token is saved to the `.cache/huggingface/token` for future uses if not NULL.
+- `TOKEN_HUGGINGFACE` should be used to set the Hugging Face token. This token is stored in `.cache/huggingface/token` for future use if not NULL.
 
-- `REPO_HUGGINGFACE` should be defined to specify the Hugging Face repository, to download the specific models. These models are typically saved to the `models` directory.
+- `REPO_HUGGINGFACE` should be defined to specify the Hugging Face repository, to download specific models. These models are typically stored in the `models` directory.
 ```bash
 # Build the Docker image
 docker build --build-arg TOKEN_HUGGINGFACE=<your-token> --build-arg REPO_HUGGINGFACE=<your-repo> -t piper-tts-app .
@@ -135,8 +200,8 @@ docker build --build-arg TOKEN_HUGGINGFACE=<your-token> --build-arg REPO_HUGGING
 # Run the Docker image
 docker run -p 7860:7860 piper-tts-app
 ```
-Replace `<your-token>` and `<your-repo>` with your actual Hugging Face token and repository respectively.
+Replace `<your-token>` and `<your-repo>` with your Hugging Face token and repository respectively.
 
-Remember to review the licensing information for the voice models you're using. 
+Remember to review the license information for the voice models you are using.
 
-Happy Text-to-Speech Converting!
+Happy Text-to-Speech Conversion!
