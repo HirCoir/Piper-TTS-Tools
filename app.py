@@ -6,7 +6,6 @@ import subprocess
 import base64
 import logging
 from flask import Flask, request, jsonify
-import shlex
 
 app = Flask(__name__)
 
@@ -14,7 +13,7 @@ temp_audio_folder = "/home/app/temp_audio"
 piper_binary_path = "/home/app/piper/piper"
 model_folder = "/home/app/models/"
 
-# Define los nombres asignados a modelos específicos, en caso de no existir no se muestran
+# Define los nombres asignados a modelos específicos
 model_names = {
     "sorah": {
         "model_path": "es_MX-sorah-high.onnx",
@@ -34,7 +33,10 @@ model_names = {
     }
 }
 
-# Comprueba si los modelos definidos existen en la carpeta de modelos
+# Variable para almacenar el token secreto
+secret_key = os.environ.get('SECRET_KEY', 'default_secret_key')
+
+# Verifica si los modelos definidos existen en la carpeta de modelos
 existing_models = [model_name for model_name in model_names.keys() if os.path.isfile(os.path.join(model_folder, model_names[model_name]["model_path"]))]
 
 def multiple_replace(text, replacements):
@@ -57,7 +59,7 @@ def filter_text(text, model_name):
 
 # Define una función para convertir texto a voz
 def convert_text_to_speech(text, model_name):
-    filtered_text = filter_text(text, model_name)[:50000]  # Limitar el texto a 500 caracteres
+    filtered_text = filter_text(text, model_name)[:50000]
     if filtered_text is None:
         return None
 
@@ -76,17 +78,28 @@ def convert_text_to_speech(text, model_name):
                 audio_base64 = base64.b64encode(audio_data).decode('utf-8')
                 return audio_base64
             except subprocess.CalledProcessError as e:
-                print(f"Error executing command: {e}")
+                print(f"Error ejecutando el comando: {e}")
                 return None
         else:
-            print(f"Model '{model_name}' not found at the specified location.")
+            print(f"Modelo '{model_name}' no encontrado.")
             return None
     else:
-        print(f"Piper binary not found at the specified location.")
+        print(f"Piper binary no encontrado.")
         return None
+
+# Función para autenticar el token en las solicitudes
+def authenticate_request():
+    token = request.headers.get('Authorization')
+    if not token or token != f'Bearer {secret_key}':
+        return jsonify({"error": "Unauthorized"}), 401
+    return None
 
 @app.route('/convert', methods=['POST'])
 def convert_text():
+    auth_response = authenticate_request()
+    if auth_response:
+        return auth_response
+    
     data = request.get_json()
     if 'text' not in data or 'model' not in data:
         return jsonify({"error": "Missing 'text' or 'model' in request."}), 400
@@ -102,6 +115,10 @@ def convert_text():
 
 @app.route('/models', methods=['GET'])
 def list_models():
+    auth_response = authenticate_request()
+    if auth_response:
+        return auth_response
+
     model_options = list(model_names.keys())
     return jsonify(model_options)
 
