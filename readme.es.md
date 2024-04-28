@@ -39,6 +39,55 @@ NOTA: Los reemplazos mencionados (`('\n', '. '),('*', '')`) siempre deben ser ag
 
 El archivo MODEL_CARD contiene información de licencia importante. Por favor, revísalo cuidadosamente ya que algunas voces pueden tener licencias restrictivas.
 
+### Definición de una Clave Secreta en Linux para Acceder a la API
+
+Para proteger tu API y permitir que solo las solicitudes con un token válido tengan acceso, puedes definir una clave secreta en tu sistema Linux y luego utilizarla en tu código. Aquí te explico cómo hacerlo paso a paso:
+
+#### Configurar la Clave Secreta
+
+1. **Establece una clave secreta** que solo tú conocerás. Esta clave se puede configurar en una variable de entorno llamada `SECRET_KEY` en tu sistema Linux.
+
+2. **Define la variable de entorno**: 
+
+   Puedes definir la variable `SECRET_KEY` de varias maneras en tu sistema:
+
+   - **Temporalmente en una sesión de terminal**:
+     
+     En la terminal, puedes establecer la variable usando el siguiente comando:
+     ```shell
+     export SECRET_KEY="tu_clave_secreta"
+     ```
+
+     La variable solo estará disponible en la sesión actual de la terminal. Una vez que cierres la sesión, la variable dejará de estar disponible.
+
+   - **Permanentemente**:
+
+     Para hacer que la variable sea persistente entre sesiones, debes añadirla a un archivo de configuración del entorno. Por ejemplo, en **`~/.bashrc`** o **`~/.profile`**.
+
+     Abre uno de esos archivos en un editor de texto, por ejemplo, `nano`:
+     ```shell
+     nano ~/.bashrc
+     ```
+
+     Añade la siguiente línea al final del archivo:
+     ```shell
+     export SECRET_KEY="tu_clave_secreta"
+     ```
+
+     Guarda y cierra el archivo. Luego, actualiza la configuración de tu terminal:
+     ```shell
+     source ~/.bashrc
+     ```
+
+3. **Verifica que la variable de entorno esté configurada**:
+
+   Puedes verificar que la variable `SECRET_KEY` esté configurada correctamente con el siguiente comando:
+   ```shell
+   echo $SECRET_KEY
+   ```
+
+   Este comando debería mostrar la clave secreta que configuraste.
+
 ## Ejemplos de Uso de la API
 
 La API admite varios lenguajes de programación:
@@ -47,8 +96,13 @@ La API admite varios lenguajes de programación:
 
 ```node
 const axios = require('axios');
+const fs = require('fs');
 
 const url = 'http://127.0.0.1:7860/convert';
+
+// Token de autenticación (cambia 'tu_token_secreto' por tu clave secreta)
+const token = 'tu_token_secreto';
+
 const data = {
     text: "Este es un ejemplo de texto\ncon múltiples saltos de línea\npara probar la funcionalidad\ndel código del cliente.",
     model: "kamora"
@@ -56,14 +110,16 @@ const data = {
 
 axios.post(url, data, {
     headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
     }
 })
 .then(response => {
     const audioBase64 = response.data.audio_base64;
     const audioBytes = Buffer.from(audioBase64, 'base64');
 
-    require('fs').writeFileSync('output.wav', audioBytes);
+    // Guardar el archivo de audio
+    fs.writeFileSync('output.wav', audioBytes);
     console.log('Audio guardado como output.wav');
 })
 .catch(error => {
@@ -78,19 +134,28 @@ import requests
 import base64
 import json
 
+# URL de la API
 url = 'http://127.0.0.1:7860/convert'
-headers = {'Content-Type': 'application/json'}
 
-# Texto con saltos de línea
+# Token de autenticación (cambia 'tu_token_secreto' por tu clave secreta)
+token = 'tu_token_secreto'
+
+# Añade el token a los encabezados de la solicitud
+headers = {
+    'Content-Type': 'application/json',
+    'Authorization': f'Bearer {token}'
+}
+
+# Datos de texto con saltos de línea y modelo a usar
 data = {
     "text": "Este es un ejemplo de texto\ncon múltiples saltos de línea\npara probar la funcionalidad\ndel código del cliente.",
     "model": "kamora"
 }
 
-# Convertir a JSON
+# Convertir los datos a JSON
 data_json = json.dumps(data)
 
-# Enviar la solicitud al servidor de Flask
+# Enviar la solicitud POST al servidor de Flask
 response = requests.post(url, headers=headers, data=data_json)
 
 # Manejar la respuesta
@@ -99,11 +164,13 @@ if response.status_code == 200:
     audio_base64 = response_data['audio_base64']
     audio_bytes = base64.b64decode(audio_base64)
 
+    # Guardar el archivo de audio
     with open('output.wav', 'wb') as f:
         f.write(audio_bytes)
     print('Audio guardado como output.wav')
 else:
     print('Error obteniendo el audio:', response.status_code)
+
 ```
 
 ### Curl
@@ -112,6 +179,7 @@ else:
 curl -X POST \
   http://127.0.0.1:7860/convert \
   -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer tu_token_secreto' \
   -d '{
     "text": "Este es un ejemplo de texto\ncon múltiples saltos de línea\npara probar la funcionalidad\ndel código del cliente.",
     "model": "kamora"
