@@ -30,6 +30,10 @@ model_names = {
         "model_path": "es_MX-sorah-high.onnx",
         "replacements": [('\n', ' . '), ('*', '')]
     },
+    "Español México | Sorah Neuronal": {
+        "model_path": "es_MX-laura+RT-high.onnx,
+        "replacements": [('\n', ' . '), ('*', '')]
+    },
     "Español México | Emma Neuronal": {
         "model_path": "es_MX-emma-high.onnx",
         "replacements": [('\n', ' . '), ('*', '')]
