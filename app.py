@@ -31,12 +31,13 @@ model_names = {
     "laura": {
         "model_path": "es_MX-laura-high.onnx",
         "replacements": [('\n', '. '),('*', ''),(')', '')]
-    }
+    },
     "kamora": {
         "model_path": "kamora.onnx",
         "replacements": [('\n', '. '),('*', '')]
     }
 }
+
 
 # Variable para almacenar el token secreto
 secret_key = os.environ.get('SECRET_KEY', 'default_secret_key')
