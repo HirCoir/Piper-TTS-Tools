@@ -28,6 +28,10 @@ model_names = {
         "model_path": "es_MX-hircoir-22479-high.onnx",
         "replacements": [('\n', '. '),('*', '')]
     },
+    "laura": {
+        "model_path": "es_MX-laura-high.onnx",
+        "replacements": [('\n', '. '),('*', ''),(')', '')]
+    }
     "kamora": {
         "model_path": "kamora.onnx",
         "replacements": [('\n', '. '),('*', '')]
