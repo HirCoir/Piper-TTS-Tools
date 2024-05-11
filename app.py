@@ -43,7 +43,7 @@ model_names = {
         "replacements": [('\n', ''), ('*', '')]
     },
     "Español México | Voz HirCoir": {
-        "model_path": "es_MX-locutor-18488-epoch-high.onnx",
+        "model_path": "es_MX-HirCoir.onnx",
         "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
     },
     "Español México    | Claude": {
@@ -60,10 +60,6 @@ model_names = {
     },
     "Español Argentina | Microsoft Elena": {
         "model_path": "es_MX-hircoirvoicev5-high.onnx",
-        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
-    },
-    "Español México    | Hircoir v1": {
-        "model_path": "es_MX-locutor-18488-epoch-high.onnx",
         "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
     },
     "Español España    | Carlfm (Low)": {
