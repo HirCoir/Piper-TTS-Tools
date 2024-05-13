@@ -26,6 +26,10 @@ os.makedirs(temp_audio_folder, exist_ok=True)
 
 # Define los nombres asignados a modelos específicos, en caso de no existir no se muestran
 model_names = {
+    "Español México | Nate Gentile": {
+        "model_path": "es_MX-Nate.onnx",
+        "replacements": [('\n', ' . '), ('*', '')]
+    },
     "Español México | Sorah Neuronal": {
         "model_path": "es_MX-sorah-high.onnx",
         "replacements": [('\n', ' . '), ('*', '')]
