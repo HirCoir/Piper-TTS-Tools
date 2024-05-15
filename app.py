@@ -20,6 +20,10 @@ model_names = {
         "model_path": "es_MX-sorah-high.onnx",
         "replacements": [('\n', '. '),('*', '')]
     },
+    "Nate": {
+        "model_path": "es_MX-Nate.onnx",
+        "replacements": [('\n', '. '),('*', '')]
+    },
     "emma": {
         "model_path": "es_MX-emma-high.onnx",
         "replacements": [('\n', '. '),('*', '')]
