@@ -101,48 +101,32 @@
     </footer>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/autosize.js/4.0.2/autosize.min.js"></script>
     <script>
-document.getElementById('conversion-form').addEventListener('submit', async function (e) {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    try {
-        const response = await fetch('/convert', {
-            method: 'POST',
-            body: formData
+        document.getElementById('conversion-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            try {
+                const response = await fetch('/convert', {
+                    method: 'POST',
+                    body: formData
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    const audioContent = data.audio_base64;
+                    const audioElement = document.createElement('audio');
+                    audioElement.src = 'data:audio/wav;base64,' + audioContent;
+                    audioElement.controls = true;
+                    audioElement.autoplay = true;
+                    document.getElementById('audio-container').innerHTML = '';
+                    document.getElementById('audio-container').appendChild(audioElement);
+                } else {
+                    console.error('Error al convertir texto a voz:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Error de red:', error);
+            }
         });
-        if (response.ok) {
-            const data = await response.json();
-            const audioContent = data.audio_base64;
-            
-            // Generar un número aleatorio para el nombre del archivo
-            const randomNumber = Math.floor(Math.random() * 1000000); // Puedes ajustar el rango según tus necesidades
-            
-            // Nombre del archivo con el número aleatorio
-            const fileName = `HirLab_${randomNumber}.wav`;
 
-            // Crear el elemento de audio
-            const audioElement = document.createElement('audio');
-            audioElement.src = 'data:audio/wav;base64,' + audioContent;
-            audioElement.controls = true;
-            audioElement.autoplay = true;
-
-            // Descargar el archivo con el nuevo nombre
-            const downloadLink = document.createElement('a');
-            downloadLink.href = 'data:audio/wav;base64,' + audioContent;
-            downloadLink.download = fileName;
-            downloadLink.innerHTML = `Descargar ${fileName}`;
-            
-            // Limpiar el contenedor y añadir los elementos
-            document.getElementById('audio-container').innerHTML = '';
-            document.getElementById('audio-container').appendChild(audioElement);
-            document.getElementById('audio-container').appendChild(downloadLink);
-        } else {
-            console.error('Error al convertir texto a voz:', response.statusText);
-        }
-    } catch (error) {
-        console.error('Error de red:', error);
-    }
-});
-
+        autosize(document.querySelectorAll('.autosize'));
     </script>
 </body>
 </html>
