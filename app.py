@@ -30,6 +30,10 @@ model_names = {
         "model_path": "es_MX-Nate.onnx",
         "replacements": [('\n', ' . '), ('*', '')]
     },
+    "Español México | DocTops": {
+        "model_path": "es_MX-DocTops.onnx",
+        "replacements": [('\n', ' . '), ('*', '')]
+    },
     "Español México | Sorah Neuronal": {
         "model_path": "es_MX-sorah-high.onnx",
         "replacements": [('\n', ' . '), ('*', '')]
