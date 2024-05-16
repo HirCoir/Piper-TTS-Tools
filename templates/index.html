@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -48,7 +49,6 @@
             background-color: #333;
             padding: 1px;
             width: 100%;
-            resize: vertical;
             max-height: calc(100vh - 400px); /* Altura máxima del textarea */
             overflow-y: auto; /* Hacer el textarea desplazable cuando sea necesario */
         }
@@ -94,7 +94,7 @@
             {% endfor %}
         </select>
         <label for="text">Texto:</label>
-        <textarea id="text" name="text" rows="4" minlength="2" placeholder="Escribe tu texto aquí." class="autosize"></textarea>
+        <textarea id="text" name="text" rows="4" maxlength="3000" placeholder="Escribe tu texto aquí." class="autosize"></textarea>
         <button type="submit">Generar audio</button>
     </form>
     <div id="audio-container"></div>
