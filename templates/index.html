@@ -113,22 +113,28 @@ document.getElementById('conversion-form').addEventListener('submit', async func
             const data = await response.json();
             const audioContent = data.audio_base64;
             
-            // Generar un número aleatorio entre 1 y 10000
-            const randomNumber = Math.floor(Math.random() * 10000) + 1;
+            // Generar un número aleatorio para el nombre del archivo
+            const randomNumber = Math.floor(Math.random() * 1000000); // Puedes ajustar el rango según tus necesidades
+            
+            // Nombre del archivo con el número aleatorio
             const fileName = `HirLab_${randomNumber}.wav`;
 
-            // Crear un elemento de audio y configurar su fuente
+            // Crear el elemento de audio
             const audioElement = document.createElement('audio');
             audioElement.src = 'data:audio/wav;base64,' + audioContent;
             audioElement.controls = true;
             audioElement.autoplay = true;
 
-            // Cambiar el nombre del archivo en el atributo "download"
-            audioElement.setAttribute('download', fileName);
-
-            // Mostrar el elemento de audio en el contenedor
+            // Descargar el archivo con el nuevo nombre
+            const downloadLink = document.createElement('a');
+            downloadLink.href = 'data:audio/wav;base64,' + audioContent;
+            downloadLink.download = fileName;
+            downloadLink.innerHTML = `Descargar ${fileName}`;
+            
+            // Limpiar el contenedor y añadir los elementos
             document.getElementById('audio-container').innerHTML = '';
             document.getElementById('audio-container').appendChild(audioElement);
+            document.getElementById('audio-container').appendChild(downloadLink);
         } else {
             console.error('Error al convertir texto a voz:', response.statusText);
         }
