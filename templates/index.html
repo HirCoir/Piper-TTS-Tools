@@ -101,39 +101,42 @@
     </footer>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/autosize.js/4.0.2/autosize.min.js"></script>
     <script>
-        document.getElementById('conversion-form').addEventListener('submit', async function (e) {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            try {
-                const response = await fetch('/convert', {
-                    method: 'POST',
-                    body: formData
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    const audioContent = data.audio_base64;
-                    const audioUrl = 'data:audio/wav;base64,' + audioContent;
-                    const audioFileName = 'HirLab_' + Math.floor(Math.random() * 10000) + '.wav';
-                    const audioElement = document.createElement('audio');
-                    audioElement.src = audioUrl;
-                    audioElement.controls = true;
-                    document.getElementById('audio-container').innerHTML = '';
-                    document.getElementById('audio-container').appendChild(audioElement);
-
-                    const downloadButton = document.createElement('a');
-                    downloadButton.href = audioUrl;
-                    downloadButton.download = audioFileName;
-                    downloadButton.innerHTML = 'Descargar Audio';
-                    document.getElementById('audio-container').appendChild(downloadButton);
-                } else {
-                    console.error('Error al convertir texto a voz:', response.statusText);
-                }
-            } catch (error) {
-                console.error('Error de red:', error);
-            }
+document.getElementById('conversion-form').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    try {
+        const response = await fetch('/convert', {
+            method: 'POST',
+            body: formData
         });
+        if (response.ok) {
+            const data = await response.json();
+            const audioContent = data.audio_base64;
+            
+            // Generar un número aleatorio entre 1 y 10000
+            const randomNumber = Math.floor(Math.random() * 10000) + 1;
+            const fileName = `HirLab_${randomNumber}.wav`;
 
-        autosize(document.querySelectorAll('.autosize'));
+            // Crear un elemento de audio y configurar su fuente
+            const audioElement = document.createElement('audio');
+            audioElement.src = 'data:audio/wav;base64,' + audioContent;
+            audioElement.controls = true;
+            audioElement.autoplay = true;
+
+            // Cambiar el nombre del archivo en el atributo "download"
+            audioElement.setAttribute('download', fileName);
+
+            // Mostrar el elemento de audio en el contenedor
+            document.getElementById('audio-container').innerHTML = '';
+            document.getElementById('audio-container').appendChild(audioElement);
+        } else {
+            console.error('Error al convertir texto a voz:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Error de red:', error);
+    }
+});
+
     </script>
 </body>
 </html>
