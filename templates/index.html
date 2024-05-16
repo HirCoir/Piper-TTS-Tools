@@ -15,9 +15,7 @@
     <meta property="og:image" content="https://tts.hircoir.eu.org/image.jpg" />
     
     <link rel="icon" type="image/x-icon" href="{{ url_for('favicon') }}">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Texto a voz | HirLab</title>
+
     <style>
         body {
             background-color: #222;
@@ -114,12 +112,19 @@
                 if (response.ok) {
                     const data = await response.json();
                     const audioContent = data.audio_base64;
+                    const audioUrl = 'data:audio/wav;base64,' + audioContent;
+                    const audioFileName = 'HirLab_' + Math.floor(Math.random() * 10000) + '.wav';
                     const audioElement = document.createElement('audio');
-                    audioElement.src = 'data:audio/wav;base64,' + audioContent;
+                    audioElement.src = audioUrl;
                     audioElement.controls = true;
-                    audioElement.autoplay = true;
                     document.getElementById('audio-container').innerHTML = '';
                     document.getElementById('audio-container').appendChild(audioElement);
+
+                    const downloadButton = document.createElement('a');
+                    downloadButton.href = audioUrl;
+                    downloadButton.download = audioFileName;
+                    downloadButton.innerHTML = 'Descargar Audio';
+                    document.getElementById('audio-container').appendChild(downloadButton);
                 } else {
                     console.error('Error al convertir texto a voz:', response.statusText);
                 }
