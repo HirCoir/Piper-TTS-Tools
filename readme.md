@@ -1,23 +1,21 @@
 # Piper TTS Flask API
 
-This Flask API allows you to convert text to speech using the [PIPER](https://github.com/rhasspy/piper) text to speech engine. Piper is a fast and local neural text to speech system optimized for Raspberry Pi 4. The API supports several languages, and the voices are trained with VITS and then exported to onnxruntime.
-
+This Flask API enables you to convert text to speech using the [PIPER](https://github.com/rhasspy/piper) text-to-speech engine. Piper is a fast and local neural text-to-speech system optimized for Raspberry Pi 4. The API supports multiple languages, and the voices are trained with VITS and then exported to onnxruntime.
 
 Each voice requires two files:
 
 - A .onnx model file (e.g., en_US-lessac-medium.onnx)
 - A .onnx.json config file (e.g., en_US-lessac-medium.onnx.json)
 
-The API supports several languages, and the voices are trained with VITS and then exported to onnxruntime. The Piper TTS API allows to choose different voices from the [community-created voices](https://huggingface.co/rhasspy/piper-voices/tree/main) in the HuggingFace repository.
-
+The API supports several languages, and the voices are trained with VITS and then exported to onnxruntime. The Piper TTS API allows you to choose different voices from the [community-created voices](https://huggingface.co/rhasspy/piper-voices/tree/main) in the HuggingFace repository.
 
 The MODEL_CARD file contains important licensing information. Please review it carefully as some voices may have restrictive licenses.
 
 ## API Usage Examples
 
-The API supports multiple programming languages: 
+The API supports multiple programming languages:
 
-### Node.js 
+### Node.js
 
 ```node
 const axios = require('axios');
@@ -90,5 +88,6 @@ curl -X POST \
     "text": "This is an example text\nwith multiple line breaks\nto test the functionality\nof the client code.",
     "model": "kamora"
   }'
-
 ```
+
+Help/documentation is available from the server using [http://127.0.0.1:8080/help](http://127.0.0.1:8080/help).
