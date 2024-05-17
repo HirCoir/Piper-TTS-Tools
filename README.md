@@ -2,6 +2,7 @@
 
 Welcome to the documentation for the text-to-speech application using Piper. This application allows you to convert text to speech in various languages and accents using custom and public TTS models, these models must be based on the .onnx format compatible with Piper. Furthermore, it uses the Flask framework to create an interactive web interface and the Hugging Face library to download and use all TTS models.
 
+![Captura](preview.png)
 ## Deploying the App
 
 To deploy the application, follow the steps below:
