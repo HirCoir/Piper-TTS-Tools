@@ -10,32 +10,6 @@ Each voice requires two files:
 
 The API supports several languages, and the voices are trained with VITS and then exported to onnxruntime. The Piper TTS API allows to choose different voices from the [community-created voices](https://huggingface.co/rhasspy/piper-voices/tree/main) in the HuggingFace repository.
 
-The application uses the community-created voices from the HuggingFace repository of rhasspy, the creator of Piper. Models can be easily added and listed using the format in the app.py
-
-```python
-"kamora": {
-        "model_path": "es_MX-kamora-tiny-x-low.onnx",
-        "replacements": [('\n', '. '),('*', '')]
-    }
-```
-where "Kamora" is the name shown to the user when accessing /models. 
-The model_path "es_MX-kamora-tiny-x-low.onnx" is the specific filename of your model in the models folder. The "replacements" field inside the model dictionary is to replace specific elements in the text before sending it to the model in case your model might not omit certain characters such as periods, exclamation marks, and others to be replaced by a comma to give a pause.
-
-The following is an example of the "replacements" field:
-
-```python
-"replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
-```
-This replaces the following:
-
-- `(` with `,`
-- `)` with `,`
-- `?` with `,`
-- `¿` with `,`
-- `:` with `,`
-- `\n` with ` ` 
-
-NOTE: The mentioned replacements (`('\n', '. '),('*', '')`) must always be added and they are necessary for the functionality of the Piper binary.
 
 The MODEL_CARD file contains important licensing information. Please review it carefully as some voices may have restrictive licenses.
 
@@ -118,25 +92,3 @@ curl -X POST \
   }'
 
 ```
-
-## Building the Docker Image
-
-The Docker image for this project can be built using the Dockerfile provided. The Dockerfile defines a base image, installs the required packages, and sets up the environment for the application.
-
-The Dockerfile includes instructions for managing environment variables, which can be used to download your personal models if you have any. 
-
-- `TOKEN_HUGGINGFACE` should be used to set the Hugging Face token. This token is saved to the `.cache/huggingface/token` for future uses if not NULL.
-
-- `REPO_HUGGINGFACE` should be defined to specify the Hugging Face repository, to download the specific models. These models are typically saved to the `models` directory.
-```bash
-# Build the Docker image
-docker build --build-arg TOKEN_HUGGINGFACE=<your-token> --build-arg REPO_HUGGINGFACE=<your-repo> -t piper-tts-app .
-
-# Run the Docker image
-docker run -p 7860:7860 piper-tts-app
-```
-Replace `<your-token>` and `<your-repo>` with your actual Hugging Face token and repository respectively.
-
-Remember to review the licensing information for the voice models you're using. 
-
-Happy Text-to-Speech Converting!
