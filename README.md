@@ -20,13 +20,17 @@ To deploy the application, follow these steps:
    cd HirCoir-Piper-tts-app
    ```
 
-3. Run the `app.py` file with Python:
+3. Download Piper for Windows from the following link: [Piper Releases](https://github.com/rhasspy/piper/releases/)
+   
+4. Extract the `piper` folder from the downloaded file and place it in the project directory.
+
+5. Run the `app.py` file with Python:
 
    ```bash
    python app.py
    ```
 
-4. Select folder with models:
+6. Select folder with models:
    Upon running `python app.py`, it will automatically open a window where you need to select the folder containing your .onnx models.
 
 ## Important Considerations
@@ -45,3 +49,4 @@ Thanks to the developer of the original application and the creators of the spee
 ## License
 
 The application is open source and distributed under the MIT License. Refer to the license for more details.
+```
