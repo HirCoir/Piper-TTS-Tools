@@ -145,7 +145,7 @@ def filter_text(text, model_name):
         return None
 
 def convert_text_to_speech(text, model_name):
-    filtered_text = filter_text(text, model_name)[:3000]  # Limitar el texto a 3000 caracteres
+    filtered_text = filter_text(text, model_name)[:1000]  # Limitar el texto a 3000 caracteres
     if filtered_text is None:
         return None
 
