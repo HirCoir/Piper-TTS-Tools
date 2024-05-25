@@ -7,37 +7,10 @@ import subprocess
 import time
 import base64
 import sqlite3
-
 from flask import Flask, render_template, request, jsonify, after_this_request, send_from_directory
 from functools import wraps
-from flask import g
+from datetime import datetime, timedelta
 
-# En tu función de conexión a la base de datos, agregamos una función para obtener la conexión
-def get_db():
-    db = getattr(g, '_database', None)
-    if db is None:
-        db = g._database = sqlite3.connect(db_path)
-    return db
-
-# Ahora, modificamos nuestras funciones de acceso a la base de datos para que utilicen esta función
-def update_request_time(ip):
-    db = get_db()
-    db.execute("INSERT OR REPLACE INTO rate_limit(ip, last_request) VALUES (?, ?)", (ip, time.time()))
-    db.commit()
-
-def get_last_request_time(ip):
-    db = get_db()
-    cursor = db.execute("SELECT last_request FROM rate_limit WHERE ip=?", (ip,))
-    result = cursor.fetchone()
-    if result:
-        return result[0]
-    return None
-
-@app.teardown_appcontext
-def close_connection(exception):
-    db = getattr(g, '_database', None)
-    if db is not None:
-        db.close()
 # Configuración del registro
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -62,28 +35,7 @@ model_names = {
 # Comprueba si los modelos definidos existen en la carpeta de modelos
 existing_models = [model_name for model_name in model_names.keys() if os.path.isfile(os.path.join(model_folder, model_names[model_name]["model_path"]))]
 
-# Conexión a la base de datos SQLite
-db_path = os.path.join(file_folder, 'rate_limit.db')
-conn = sqlite3.connect(db_path)
-conn.execute('''CREATE TABLE IF NOT EXISTS rate_limit (
-                 ip TEXT PRIMARY KEY,
-                 last_request REAL
-                 )''')
-conn.commit()
-
-def update_request_time(ip):
-    conn.execute("INSERT OR REPLACE INTO rate_limit(ip, last_request) VALUES (?, ?)", (ip, time.time()))
-    conn.commit()
-
-def get_last_request_time(ip):
-    cursor = conn.execute("SELECT last_request FROM rate_limit WHERE ip=?", (ip,))
-    result = cursor.fetchone()
-    if result:
-        return result[0]
-    return None
-
 def multiple_replace(text, replacements):
-    # Iterar sobre cada par de remplazo
     for old, new in replacements:
         text = text.replace(old, new)
     return text
@@ -91,9 +43,7 @@ def multiple_replace(text, replacements):
 def filter_text(text, model_name):
     if model_name in model_names:
         replacements = model_names[model_name]["replacements"]
-        # Realizar reemplazos específicos del modelo
         filtered_text = multiple_replace(text, replacements)
-        # Escapar todos los caracteres especiales dentro de las comillas
         filtered_text = re.sub(r'(["\'])', lambda m: "\\" + m.group(0), filtered_text)
         return filtered_text
     else:
@@ -101,7 +51,7 @@ def filter_text(text, model_name):
         return None
 
 def convert_text_to_speech(text, model_name):
-    filtered_text = filter_text(text, model_name)[:1000]  # Limitar el texto a 3000 caracteres
+    filtered_text = filter_text(text, model_name)[:1000]
     if filtered_text is None:
         return None
 
@@ -111,7 +61,6 @@ def convert_text_to_speech(text, model_name):
     if os.path.isfile(piper_binary_path) and model_name in model_names:
         model_path = os.path.join(model_folder, model_names[model_name]["model_path"])
         if os.path.isfile(model_path):
-            # Construye el comando para ejecutar Piper
             command = f'echo "{filtered_text}" | "{piper_binary_path}" -m {model_path} -f {output_file}'
             try:
                 subprocess.run(command, shell=True, check=True)
@@ -126,17 +75,40 @@ def convert_text_to_speech(text, model_name):
         logging.error(f"No se encontró el binario de Piper en la ubicación especificada.")
         return None
 
-def rate_limit(limit):
+# Configuración de la base de datos SQLite
+db_path = 'rate_limit.db'
+
+def init_db():
+    with sqlite3.connect(db_path) as conn:
+        cursor = conn.cursor()
+        cursor.execute('''CREATE TABLE IF NOT EXISTS requests (
+                            ip TEXT,
+                            timestamp DATETIME
+                          )''')
+        conn.commit()
+
+init_db()
+
+def rate_limit(limit, period):
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
             ip = request.remote_addr
-            last_request = get_last_request_time(ip)
-            if last_request is not None:
-                elapsed_time = time.time() - last_request
-                if elapsed_time < limit:
+            now = datetime.now()
+            window_start = now - timedelta(seconds=period)
+
+            with sqlite3.connect(db_path) as conn:
+                cursor = conn.cursor()
+                cursor.execute("DELETE FROM requests WHERE timestamp < ?", (window_start,))
+                cursor.execute("SELECT COUNT(*) FROM requests WHERE ip = ? AND timestamp >= ?", (ip, window_start))
+                request_count = cursor.fetchone()[0]
+
+                if request_count >= limit:
                     return jsonify({'error': 'Too many requests. Please try again later.'}), 429
-            update_request_time(ip)
+
+                cursor.execute("INSERT INTO requests (ip, timestamp) VALUES (?, ?)", (ip, now))
+                conn.commit()
+
             return func(*args, **kwargs)
         return wrapper
     return decorator
@@ -144,26 +116,22 @@ def rate_limit(limit):
 def restrict_access(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
-        # Verifica si la solicitud se hizo desde la página index.html
         referer = request.headers.get("Referer")
         if referer and referer.endswith("/"):
-            # Permite el acceso a la función si la solicitud proviene de la página index.html
             return func(*args, **kwargs)
         else:
-            # Devuelve un mensaje de error o redirecciona a otra página
-            return "Acceso no autorizado", 403  # Código de respuesta HTTP 403 - Forbidden
+            return "Acceso no autorizado", 403
     return wrapper
 
 @app.route('/')
 def index():
     model_options = existing_models
-    # Registra el contenido de la carpeta actual
     logging.info("Contents of current folder: %s", os.listdir(file_folder))
     return render_template('index.html', model_options=model_options)
 
 @app.route('/convert', methods=['POST'])
 @restrict_access
-@rate_limit(1)  # Limita las solicitudes a 1 por segundo
+@rate_limit(5, 60)  # Limita las solicitudes a 5 por minuto por IP
 def convert_text():
     text = request.form['text']
     model_name = request.form['model']
