@@ -1,4 +1,6 @@
-<html lang="es"><head>
+<!DOCTYPE html>
+<html lang="es">
+<head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="keywords" content="texto a voz, TTS, accesibilidad, productividad, herramientas de voz, HirLab, texto a voz, conversión de texto a voz, IA, Hircoir, herramienta de texto a voz, tts.hircoir.eu.org youtube.com/@hircoir, piper, free tts, free text to voice, convertir texto a voz gratis, free ai tts, texto a voz realista, tts realista, free tts, hircoir.eu.org, convertir texto a voz, hircoir project, https://github.com/HirCoir/Piper-TTS-Tools, como convertir texto a voz, text to spech, spech, de texto a voz, hircoir.site, www.hircoir.site, hircoir ai, hircoir IA">
     <meta name="author" content="HirCoir">
@@ -8,120 +10,66 @@
     <meta property="og:image" content="https://tts.hircoir.eu.org/og-image.jpg">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://tts.hircoir.eu.org">
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('favicon') }}">
     <title>TTS Hircoir - Plataforma de Texto a Voz</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body {
-            background-color: #222;
-            color: #fff;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
+            background-color: #f8f9fa;
+            color: #343a40;
         }
-        h1 {
+        .container {
             margin-top: 50px;
-            font-size: 32px;
-            font-weight: bold;
-        }
-        form {
-            margin-top: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #333;
-            border-radius: 10px;
-        }
-        label, select, textarea {
-            margin: 10px 0;
-            font-size: 16px;
-            color: #eee;
-            border: 1px solid #666;
-            border-radius: 5px;
-            background-color: #444;
-            padding: 10px;
-            width: 100%;
-        }
-        select {
-            height: 40px;
-        }
-        textarea {
-            resize: none;
-            height: 100px;
-        }
-        button {
-            margin-top: 20px;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            padding: 10px 20px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        #audio-container {
-            margin-top: 20px;
-            max-width: 90%;
-            margin: 0 auto;
         }
         footer {
-            background-color: #333;
-            color: #eee;
-            padding: 20px 0;
-            text-align: center;
-            position: absolute;
+            position: fixed;
             bottom: 0;
             width: 100%;
+            background-color: #343a40;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
         }
-        .social
         .social-buttons {
             margin-top: 20px;
         }
         .social-buttons a {
             margin: 0 10px;
-            text-decoration: none;
             color: #fff;
-            font-size: 24px;
-        }
-        .social-buttons a:hover {
-            color: #ddd;
         }
     </style>
 </head>
 <body>
-    <h1>Convertidor de Texto a Audio</h1>
-    <form id="conversion-form">
-        <label for="model">Modelo:</label>
-        <select id="model" name="model">
-            <!-- Opciones de modelos generadas dinámicamente -->
-            {% for model in model_options %}
-            <option value="{{ model }}">{{ model }}</option>
-            {% endfor %}
-        </select>
-        <label for="text">Texto:</label>
-        <lt-mirror contenteditable="false" class="lt-mirror--grid-item" data-lt-linked="1" style="display: none;"><lt-highlighter contenteditable="false" style="display: none;"><lt-div spellcheck="false" class="lt-highlighter__wrapper" style="width: 620px !important; height: 120px !important; transform: none !important; transform-origin: 311px 61px !important; zoom: 1 !important; margin-top: 319.438px !important; margin-left: 524.5px !important;"><lt-div class="lt-highlighter__scroll-element" style="top: 0px !important; left: 0px !important; width: 620px !important; height: 120px !important;"></lt-div></lt-div></lt-highlighter><lt-div spellcheck="false" class="lt-mirror__wrapper notranslate" data-lt-scroll-top="0" data-lt-scroll-left="0" data-lt-scroll-top-scaled="0" data-lt-scroll-left-scaled="0" data-lt-scroll-top-scaled-and-zoomed="0" data-lt-scroll-left-scaled-and-zoomed="0" style="border: 1px solid rgb(102, 102, 102) !important; border-radius: 5px !important; direction: ltr !important; font: 400 16px monospace !important; font-synthesis: weight style small-caps !important; hyphens: manual !important; letter-spacing: normal !important; line-break: auto !important; margin: 318.438px 0px 10px 523.5px !important; padding: 10px !important; text-align: start !important; text-decoration: none solid rgb(238, 238, 238) !important; text-indent: 0px !important; text-rendering: auto !important; text-transform: none !important; transform: none !important; transform-origin: 311px 61px !important; unicode-bidi: normal !important; white-space: pre-wrap !important; word-spacing: 0px !important; overflow-wrap: break-word !important; writing-mode: horizontal-tb !important; zoom: 1 !important; -webkit-locale: &quot;es&quot; !important; -webkit-rtl-ordering: logical !important; width: 600px !important; height: 100px !important;"><lt-div class="lt-mirror__canvas" style="margin-top: 0px !important; margin-left: 0px !important; width: 600px !important; height: 100px !important;"><lt-span></lt-span></lt-div></lt-div></lt-mirror><textarea id="text" name="text" rows="4" maxlength="1000" placeholder="Escribe tu texto aquí." class="autosize" data-lt-tmp-id="lt-400839" spellcheck="false" data-gramm="false"></textarea>
-        <button type="submit">Generar audio</button>
-    </form>
-    <div id="audio-container"></div>
-    <div class="social-buttons">
-        <a href="https://www.youtube.com/@hircoir" target="_blank">
-            <img src="https://img.icons8.com/ios-filled/50/ffffff/youtube-play.png" alt="YouTube">
-        </a>
-        <a href="https://github.com/HirCoir/Piper-TTS-Tools" target="_blank">
-            <img src="https://img.icons8.com/ios-filled/50/ffffff/github.png" alt="GitHub">
-        </a>
+    <div class="container text-center">
+        <h1>Convertidor de Texto a Audio</h1>
+        <form id="conversion-form" class="mt-4">
+            <div class="form-group">
+                <label for="model">Modelo:</label>
+                <select id="model" name="model" class="form-control">
+                    {% for model in model_options %}
+                    <option value="{{ model }}">{{ model }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="text">Texto:</label>
+                <textarea id="text" name="text" rows="4" maxlength="1000" placeholder="Escribe tu texto aquí." class="form-control autosize"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Generar audio</button>
+        </form>
+        <div id="audio-container" class="mt-4"></div>
+        <div class="social-buttons">
+            <a href="https://www.youtube.com/@hircoir" target="_blank" class="btn btn-danger">YouTube</a>
+            <a href="https://github.com/HirCoir/Piper-TTS-Tools" target="_blank" class="btn btn-dark">GitHub</a>
+        </div>
     </div>
     <footer>
         <p>© 2024 HirLab. Todos los derechos reservados.</p>
     </footer>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/autosize.js/4.0.2/autosize.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
         document.getElementById('conversion-form').addEventListener('submit', async function (e) {
             e.preventDefault();
@@ -150,5 +98,5 @@
 
         autosize(document.querySelectorAll('.autosize'));
     </script>
-
-<lt-toolbar contenteditable="false" data-lt-adjust-appearance="true" data-lt-force-appearance="dark" style="display: none;"><lt-div class="lt-toolbar__wrapper" style="left: 1119px; position: absolute !important; top: 413px !important; bottom: auto !important; z-index: auto;"><lt-div class="lt-toolbar__extras"><lt-span class="lt-toolbar__disable-icon"><lt-comp-icon class="lt-icon--disable lt-icon--clickable" data-lt-prevent-focus="true"><lt-span class="lt-icon__icon lt-icon__disable"></lt-span></lt-comp-icon></lt-span><lt-div class="lt-toolbar__divider"></lt-div><lt-div class="lt-toolbar__premium-icon"></lt-div><lt-span class="lt-toolbar__rephrasing-icon lt-toolbar__rephrasing-icon--disabled lt-toolbar__rephrasing-icon--disabled"><lt-comp-icon class="lt-icon--rephrasing lt-icon--clickable" data-lt-prevent-focus="true"><lt-span class="lt-icon__icon lt-icon__rephrasing"></lt-span></lt-comp-icon></lt-span><lt-span class="lt-toolbar__rephrasing-icon lt-toolbar__rephrasing-icon--disabled lt-toolbar__rephrasing-icon--hidden"><lt-comp-icon class="lt-icon--rephrasing lt-icon--clickable" data-lt-prevent-focus="true"><lt-span class="lt-icon__icon lt-icon__rephrasing"></lt-span></lt-comp-icon></lt-span></lt-div><lt-div class="lt-toolbar__status-icon lt-toolbar__status-icon--has-no-errors" title=""></lt-div><lt-div class="lt-toolbar__premium-icon-dot"></lt-div></lt-div></lt-toolbar></body></html>
+</body>
+</html>
