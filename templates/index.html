@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="keywords" content="texto a voz, TTS, accesibilidad, productividad, herramientas de voz, HirLab, texto a voz, conversión de texto a voz, IA, Hircoir, herramienta de texto a voz, tts.hircoir.eu.org youtube.com/@hircoir, piper, free tts, free text to voice, convertir texto a voz gratis, free ai tts, texto a voz realista, tts realista, free tts, hircoir.eu.org, convertir texto a voz, hircoir project, https://github.com/HirCoir/Piper-TTS-Tools, como convertir texto a voz, text to spech, spech, de texto a voz, hircoir.site, www.hircoir.site, hircoir ai, hircoir IA">
     <meta name="author" content="HirCoir">
@@ -10,42 +11,37 @@
     <meta property="og:image" content="https://tts.hircoir.eu.org/og-image.jpg">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://tts.hircoir.eu.org">
-    <link rel="icon" type="image/x-icon" href="{{ url_for('favicon') }}">
+    <link rel="icon" type="image/x-icon" href="https://tts.hircoir.eu.org/favicon.ico">
     <title>TTS Hircoir - Plataforma de Texto a Voz</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: #f8f9fa;
-            color: #343a40;
+            background-color: #222;
+            color: #fff;
         }
-        .container {
-            margin-top: 50px;
+        .btn-primary, .btn-primary:hover, .btn-primary:focus {
+            background-color: #007bff;
+            border-color: #007bff;
         }
         footer {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            background-color: #343a40;
-            color: #fff;
+            background-color: #333;
+            color: #eee;
             padding: 10px 0;
             text-align: center;
-        }
-        .social-buttons {
-            margin-top: 20px;
-        }
-        .social-buttons a {
-            margin: 0 10px;
-            color: #fff;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
         }
     </style>
 </head>
 <body>
     <div class="container text-center">
-        <h1>Convertidor de Texto a Audio</h1>
+        <h1 class="mt-5">Convertidor de Texto a Audio</h1>
         <form id="conversion-form" class="mt-4">
             <div class="form-group">
                 <label for="model">Modelo:</label>
                 <select id="model" name="model" class="form-control">
+                    <!-- Opciones del modelo -->
                     {% for model in model_options %}
                     <option value="{{ model }}">{{ model }}</option>
                     {% endfor %}
@@ -53,23 +49,29 @@
             </div>
             <div class="form-group">
                 <label for="text">Texto:</label>
-                <textarea id="text" name="text" rows="4" maxlength="1000" placeholder="Escribe tu texto aquí." class="form-control autosize"></textarea>
+                <textarea id="text" name="text" rows="4" maxlength="1000" class="form-control autosize" placeholder="Escribe tu texto aquí."></textarea>
             </div>
             <button type="submit" class="btn btn-primary">Generar audio</button>
         </form>
         <div id="audio-container" class="mt-4"></div>
-        <div class="social-buttons">
-            <a href="https://www.youtube.com/@hircoir" target="_blank" class="btn btn-danger">YouTube</a>
-            <a href="https://github.com/HirCoir/Piper-TTS-Tools" target="_blank" class="btn btn-dark">GitHub</a>
-        </div>
     </div>
+
     <footer>
         <p>© 2024 HirLab. Todos los derechos reservados.</p>
+        <div class="d-flex justify-content-center">
+            <a href="https://youtube.com/@hircoir" class="btn btn-outline-light btn-sm mx-2" target="_blank">
+                <i class="fab fa-youtube"></i> YouTube
+            </a>
+            <a href="https://github.com/HirCoir/Piper-TTS-Tools" class="btn btn-outline-light btn-sm mx-2" target="_blank">
+                <i class="fab fa-github"></i> GitHub
+            </a>
+        </div>
     </footer>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/autosize.js/4.0.2/autosize.min.js"></script>
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/autosize.js/4.0.2/autosize.min.js"></script>
     <script>
         document.getElementById('conversion-form').addEventListener('submit', async function (e) {
             e.preventDefault();
