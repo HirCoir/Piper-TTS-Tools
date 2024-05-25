@@ -10,7 +10,34 @@ import sqlite3
 
 from flask import Flask, render_template, request, jsonify, after_this_request, send_from_directory
 from functools import wraps
+from flask import g
 
+# En tu función de conexión a la base de datos, agregamos una función para obtener la conexión
+def get_db():
+    db = getattr(g, '_database', None)
+    if db is None:
+        db = g._database = sqlite3.connect(db_path)
+    return db
+
+# Ahora, modificamos nuestras funciones de acceso a la base de datos para que utilicen esta función
+def update_request_time(ip):
+    db = get_db()
+    db.execute("INSERT OR REPLACE INTO rate_limit(ip, last_request) VALUES (?, ?)", (ip, time.time()))
+    db.commit()
+
+def get_last_request_time(ip):
+    db = get_db()
+    cursor = db.execute("SELECT last_request FROM rate_limit WHERE ip=?", (ip,))
+    result = cursor.fetchone()
+    if result:
+        return result[0]
+    return None
+
+@app.teardown_appcontext
+def close_connection(exception):
+    db = getattr(g, '_database', None)
+    if db is not None:
+        db.close()
 # Configuración del registro
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
