@@ -11,17 +11,18 @@
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website" />
-<meta property="og:url" content="https://metatags.io/" />
+<meta property="og:url" content="{{ domain_url }}" />
 <meta property="og:title" content="Texto a voz - HirLab" />
 <meta property="og:description" content="Convierte gratuitamente texto a voz utilizando Ingeligencia Artificial." />
-<meta property="og:image" content="https://metatags.io/images/meta-tags.png" />
+<meta property="og:image" content="{{ url_for('og_image', _external=True) }}">
+
 
 <!-- Twitter -->
 <meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:url" content="https://metatags.io/" />
+<meta property="twitter:url" content="{{ domain_url }}" />
 <meta property="twitter:title" content="Texto a voz - HirLab" />
 <meta property="twitter:description" content="Convierte gratuitamente texto a voz utilizando Ingeligencia Artificial." />
-<meta property="twitter:image" content="https://metatags.io/images/meta-tags.png" />
+<meta property="twitter:image" content="{{ url_for('og_image', _external=True) }}" />
     
 <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
