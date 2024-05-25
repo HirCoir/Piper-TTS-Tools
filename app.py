@@ -21,7 +21,6 @@ file_folder = '/home/app'
 temp_audio_folder = os.path.join(file_folder, 'temp_audio')
 model_folder = os.path.join(file_folder, 'models')
 piper_binary_path = os.path.join(file_folder, 'piper', 'piper')
-limit_exceeded_audio_path = os.path.join(file_folder, 'limite-superado', 'limit_exceeded.wav')
 
 # Crea la carpeta temp_audio si no existe
 os.makedirs(temp_audio_folder, exist_ok=True)
@@ -31,6 +30,98 @@ model_names = {
     "Español México | Nate Gentile": {
         "model_path": "es_MX-Nate.onnx",
         "replacements": [('\n', ' . '), ('*', '')]
+    },
+    "Español México | DocTops": {
+        "model_path": "es_MX-DocTops.onnx",
+        "replacements": [('\n', ' . '), ('*', '')]
+    },
+    "Español México | Sorah Neuronal": {
+        "model_path": "es_MX-sorah-high.onnx",
+        "replacements": [('\n', ' . '), ('*', '')]
+    },
+    "Español México | Laura Neuronal": {
+        "model_path": "es_MX-laura-high.onnx",
+        "replacements": [('\n', ' . '), ('*', '')]
+    },
+    "Español México | Emma Neuronal": {
+        "model_path": "es_MX-emma-high.onnx",
+        "replacements": [('\n', ' . '), ('*', '')]
+    },
+    "Español México | Kamora Neuronal": {
+        "model_path": "kamora.onnx",
+        "replacements": [('\n', ''), ('*', '')]
+    },
+    "Español México | Voz HirCoir": {
+        "model_path": "es_MX-HirCoir.onnx",
+        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
+    },
+    "Español México    | Claude": {
+        "model_path": "es_MX-claude-14947-epoch-high.onnx",
+        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
+    },
+    "Español México    | Cortana Infinite": {
+        "model_path": "es_MX-cortana-26284-high.onnx",
+        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
+    },
+    "Español México    | Ald (Medium)": {
+        "model_path": "es_MX-ald-medium.onnx",
+        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
+    },
+    "Español Argentina | Microsoft Elena": {
+        "model_path": "es_MX-hircoirvoicev5-high.onnx",
+        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
+    },
+    "Español España    | Carlfm (Low)": {
+        "model_path": "es_ES-carlfm-x_low.onnx",
+        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
+    },
+    "Español España    | Davefx (Medium)": {
+        "model_path": "es_ES-davefx-medium.onnx",
+        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
+    },
+    "Español España    | Mls 9972 (Low)": {
+        "model_path": "es_ES-mls_9972-low.onnx",
+        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
+    },
+    "Español Españá    | Mls 10246 (Low)": {
+        "model_path": "es_ES-mls_10246-low.onnx",
+        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
+    },
+    "Español España    | Sharvard (Medium)": {
+        "model_path": "es_ES-sharvard-medium.onnx",
+        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
+    },
+    "English US    | Lessac (High)": {
+        "model_path": "en_US-lessac-high.onnx",
+        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
+    },
+    "English US    | Amy (Medium)": {
+        "model_path": "en_US-amy-medium.onnx",
+        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
+    },
+    "English US    | Dany (Low)": {
+        "model_path": "en_US-danny-low.onnx",
+        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
+    },
+    "English US    | HFC Male": {
+        "model_path": "en_US-hfc_male-medium.onnx",
+        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
+    },
+    "English US    | Kusal (Medium)": {
+        "model_path": "en_US-kusal-medium.onnx",
+        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
+    },
+    "English US    | Joe (Medium)": {
+        "model_path": "en_US-joe-medium.onnx",
+        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
+    },
+    "English US    | 12Arctic (Medium)": {
+        "model_path": "en_US-l2arctic-medium.onnx",
+        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
+    },
+    "English US    | LibriTTS (High)": {
+        "model_path": "en_US-libritts-high.onnx",
+        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
     }
 }
 # Comprueba si los modelos definidos existen en la carpeta de modelos
@@ -105,13 +196,7 @@ def rate_limit(limit, period):
                 request_count = cursor.fetchone()[0]
 
                 if request_count >= limit:
-                    if os.path.isfile(limit_exceeded_audio_path):
-                        with open(limit_exceeded_audio_path, 'rb') as audio_file:
-                            audio_content = audio_file.read()
-                        audio_base64 = base64.b64encode(audio_content).decode('utf-8')
-                        return jsonify({'audio_base64': audio_base64}), 429
-                    else:
-                        return jsonify({'error': 'Too many requests. Please try again later.'}), 429
+                    return jsonify({'error': 'Too many requests. Please try again later.'}), 429
 
                 cursor.execute("INSERT INTO requests (ip, timestamp) VALUES (?, ?)", (ip, now))
                 conn.commit()
