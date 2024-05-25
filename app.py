@@ -125,6 +125,7 @@ def restrict_access(func):
 
 @app.route('/')
 def index():
+    domain_url = request.url_root
     model_options = existing_models
     logging.info("Contents of current folder: %s", os.listdir(file_folder))
     return render_template('index.html', model_options=model_options)
