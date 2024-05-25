@@ -21,6 +21,7 @@ file_folder = '/home/app'
 temp_audio_folder = os.path.join(file_folder, 'temp_audio')
 model_folder = os.path.join(file_folder, 'models')
 piper_binary_path = os.path.join(file_folder, 'piper', 'piper')
+limit_exceeded_audio_path = os.path.join(file_folder, 'limite-superado', 'limit_exceeded.wav')
 
 # Crea la carpeta temp_audio si no existe
 os.makedirs(temp_audio_folder, exist_ok=True)
@@ -104,7 +105,13 @@ def rate_limit(limit, period):
                 request_count = cursor.fetchone()[0]
 
                 if request_count >= limit:
-                    return jsonify({'error': 'Too many requests. Please try again later.'}), 429
+                    if os.path.isfile(limit_exceeded_audio_path):
+                        with open(limit_exceeded_audio_path, 'rb') as audio_file:
+                            audio_content = audio_file.read()
+                        audio_base64 = base64.b64encode(audio_content).decode('utf-8')
+                        return jsonify({'audio_base64': audio_base64}), 429
+                    else:
+                        return jsonify({'error': 'Too many requests. Please try again later.'}), 429
 
                 cursor.execute("INSERT INTO requests (ip, timestamp) VALUES (?, ?)", (ip, now))
                 conn.commit()
