@@ -6,6 +6,7 @@ import string
 import subprocess
 import time
 import base64
+import sqlite3
 
 from flask import Flask, render_template, request, jsonify, after_this_request, send_from_directory
 from functools import wraps
@@ -20,10 +21,16 @@ file_folder = '/home/app'
 temp_audio_folder = os.path.join(file_folder, 'temp_audio')
 model_folder = os.path.join(file_folder, 'models')
 piper_binary_path = os.path.join(file_folder, 'piper', 'piper')
+database_path = os.path.join(file_folder, 'rate_limit.db')
 
 # Crea la carpeta temp_audio si no existe
 os.makedirs(temp_audio_folder, exist_ok=True)
 
+# Crea la tabla de rate limit si no existe
+conn = sqlite3.connect(database_path)
+conn.execute('''CREATE TABLE IF NOT EXISTS rate_limit
+             (ip TEXT PRIMARY KEY, last_request REAL)''')
+conn.close()
 # Define los nombres asignados a modelos específicos, en caso de no existir no se muestran
 model_names = {
     "Español México | Nate Gentile": {
@@ -123,9 +130,28 @@ model_names = {
         "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
     }
 }
-# Comprueba si los modelos definidos existen en la carpeta de modelos
-existing_models = [model_name for model_name in model_names.keys() if os.path.isfile(os.path.join(model_folder, model_names[model_name]["model_path"]))]
+def rate_limit(limit):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            ip = request.remote_addr
+            conn = sqlite3.connect(database_path)
+            cursor = conn.cursor()
+            cursor.execute("SELECT last_request FROM rate_limit WHERE ip=?", (ip,))
+            result = cursor.fetchone()
+            if result:
+                elapsed_time = time.time() - result[0]
+                if elapsed_time < limit:
+                    conn.close()
+                    return jsonify({'error': 'Too many requests. Please try again later.'}), 429
+            cursor.execute("INSERT OR REPLACE INTO rate_limit (ip, last_request) VALUES (?, ?)", (ip, time.time()))
+            conn.commit()
+            conn.close()
+            return func(*args, **kwargs)
+        return wrapper
+    return decorator
 
+# Tu código de funciones y rutas aquí...
 def multiple_replace(text, replacements):
     # Iterar sobre cada par de remplazo
     for old, new in replacements:
@@ -169,33 +195,6 @@ def convert_text_to_speech(text, model_name):
     else:
         logging.error(f"No se encontró el binario de Piper en la ubicación especificada.")
         return None
-
-def rate_limit(limit):
-    def decorator(func):
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            if not hasattr(wrapper, 'last_execution'):
-                wrapper.last_execution = 0
-            elapsed_time = time.time() - wrapper.last_execution
-            if elapsed_time < limit:
-                return jsonify({'error': 'Too many requests. Please try again later.'}), 429
-            wrapper.last_execution = time.time()
-            return func(*args, **kwargs)
-        return wrapper
-    return decorator
-
-def restrict_access(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        # Verifica si la solicitud se hizo desde la página index.html
-        referer = request.headers.get("Referer")
-        if referer and referer.endswith("/"):
-            # Permite el acceso a la función si la solicitud proviene de la página index.html
-            return func(*args, **kwargs)
-        else:
-            # Devuelve un mensaje de error o redirecciona a otra página
-            return "Acceso no autorizado", 403  # Código de respuesta HTTP 403 - Forbidden
-    return wrapper
 
 @app.route('/')
 def index():
