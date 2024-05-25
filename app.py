@@ -32,7 +32,7 @@ model_names = {
         "replacements": [('\n', ' . '), ('*', ''), (')', ',')]
     },
     "Español México | Lucasmelor": {
-        "model_path": "es_MX-Lucasmelor.onnx",
+        "model_path": "es_MX_Lucasmelor-high.onnx",
         "replacements": [('\n', ' . '), ('*', ''), (')', ',')]
     },
     "Español México | DocTops": {
