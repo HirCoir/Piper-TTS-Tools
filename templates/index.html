@@ -13,7 +13,7 @@
     <link rel="canonical" href="https://tts.hircoir.eu.org">
     <link rel="icon" type="image/x-icon" href="{{ url_for('favicon') }}">
     <title>TTS Hircoir - Plataforma de Texto a Voz</title>
-    <script src="https://cdn.altcha.org/altcha.js"></script>
+    
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -103,8 +103,6 @@
                 <label for="text" class="block text-lg">Texto:</label>
                 <textarea id="text" name="text" rows="4" maxlength="1000" placeholder="Escribe tu texto aquí." class="w-full p-2 bg-gray-700 border border-gray-600 rounded autosize"></textarea>
             </div>
-            <div id="altcha-container"></div> <!-- Altcha container -->
-            <input type="hidden" id="altcha-token" name="altcha_token"> <!-- Hidden field to store Altcha token -->
             <div>
                 <button type="submit" class="w-full p-3 bg-blue-600 hover:bg-blue-700 rounded text-white">Generar audio</button>
             </div>
@@ -118,18 +116,6 @@
             <a href="https://github.com/HirCoir/Piper-TTS-Tools" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
         </div>
     </footer>
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        ALTCHA.init({
-            hostname: 'tts.hircoir.site',
-            apiKey: 'ckey_01e2ba12f3e0bf3cd6530166f491',
-            container: 'altcha-container',
-            onSuccess: function(token) {
-                document.getElementById('altcha-token').value = token;
-            }
-        });
-    });
-    </script>
     <script>
       /*!
 	autosize 4.0.2
