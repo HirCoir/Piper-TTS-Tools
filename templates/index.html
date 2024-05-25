@@ -23,7 +23,7 @@
       "description": "Plataforma de texto a voz para mejorar la accesibilidad y la productividad.",
       "author": {
         "@type": "Person",
-        "name": "Tu Nombre"
+        "name": "HirCoir"
       },
       "publisher": {
         "@type": "Organization",
@@ -38,12 +38,12 @@
     </script>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
         body {
             background-color: #222;
             color: #fff;
             font-family: Arial, sans-serif;
-            text-align: center;
             margin: 0;
             padding: 0;
             display: flex;
@@ -64,11 +64,18 @@
             padding: 10px 0;
             text-align: center;
         }
-        
+        .social-icons a {
+            margin: 0 10px;
+            color: #eee;
+            transition: color 0.3s ease;
+        }
+        .social-icons a:hover {
+            color: #fff;
+        }
     </style>
 </head>
 <body>
-    <div class="container mx-auto py-10">
+    <div class="container mx-auto py-10 px-4">
         <h1 class="text-4xl font-bold mb-8">Convertidor de Texto a Audio</h1>
         <form id="conversion-form" class="space-y-4">
             <div>
@@ -93,6 +100,10 @@
     </div>
     <footer>
         <p>© 2024 HirLab. Todos los derechos reservados.</p>
+        <div class="social-icons">
+            <a href="https://youtube.com/@hircoir" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+            <a href="https://github.com/HirCoir/Piper-TTS-Tools" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
+        </div>
     </footer>
     <script>
       document.addEventListener('DOMContentLoaded', function() {
@@ -108,9 +119,9 @@
     </script>
     <script>
       /*!
-	autosize 4.0.2
-	license: MIT
-	http://www.jacklmoore.com/autosize
+    autosize 4.0.2
+    license: MIT
+    http://www.jacklmoore.com/autosize
 */
 ! function(e, t) {
     if ("function" == typeof define && define.amd) define(["module", "exports"], t);
