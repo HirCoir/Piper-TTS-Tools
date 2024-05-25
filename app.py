@@ -21,137 +21,40 @@ file_folder = '/home/app'
 temp_audio_folder = os.path.join(file_folder, 'temp_audio')
 model_folder = os.path.join(file_folder, 'models')
 piper_binary_path = os.path.join(file_folder, 'piper', 'piper')
-database_path = os.path.join(file_folder, 'rate_limit.db')
 
 # Crea la carpeta temp_audio si no existe
 os.makedirs(temp_audio_folder, exist_ok=True)
 
-# Crea la tabla de rate limit si no existe
-conn = sqlite3.connect(database_path)
-conn.execute('''CREATE TABLE IF NOT EXISTS rate_limit
-             (ip TEXT PRIMARY KEY, last_request REAL)''')
-conn.close()
 # Define los nombres asignados a modelos específicos, en caso de no existir no se muestran
 model_names = {
     "Español México | Nate Gentile": {
         "model_path": "es_MX-Nate.onnx",
         "replacements": [('\n', ' . '), ('*', '')]
-    },
-    "Español México | DocTops": {
-        "model_path": "es_MX-DocTops.onnx",
-        "replacements": [('\n', ' . '), ('*', '')]
-    },
-    "Español México | Sorah Neuronal": {
-        "model_path": "es_MX-sorah-high.onnx",
-        "replacements": [('\n', ' . '), ('*', '')]
-    },
-    "Español México | Laura Neuronal": {
-        "model_path": "es_MX-laura-high.onnx",
-        "replacements": [('\n', ' . '), ('*', '')]
-    },
-    "Español México | Emma Neuronal": {
-        "model_path": "es_MX-emma-high.onnx",
-        "replacements": [('\n', ' . '), ('*', '')]
-    },
-    "Español México | Kamora Neuronal": {
-        "model_path": "kamora.onnx",
-        "replacements": [('\n', ''), ('*', '')]
-    },
-    "Español México | Voz HirCoir": {
-        "model_path": "es_MX-HirCoir.onnx",
-        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
-    },
-    "Español México    | Claude": {
-        "model_path": "es_MX-claude-14947-epoch-high.onnx",
-        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
-    },
-    "Español México    | Cortana Infinite": {
-        "model_path": "es_MX-cortana-26284-high.onnx",
-        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
-    },
-    "Español México    | Ald (Medium)": {
-        "model_path": "es_MX-ald-medium.onnx",
-        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
-    },
-    "Español Argentina | Microsoft Elena": {
-        "model_path": "es_MX-hircoirvoicev5-high.onnx",
-        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
-    },
-    "Español España    | Carlfm (Low)": {
-        "model_path": "es_ES-carlfm-x_low.onnx",
-        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
-    },
-    "Español España    | Davefx (Medium)": {
-        "model_path": "es_ES-davefx-medium.onnx",
-        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
-    },
-    "Español España    | Mls 9972 (Low)": {
-        "model_path": "es_ES-mls_9972-low.onnx",
-        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
-    },
-    "Español Españá    | Mls 10246 (Low)": {
-        "model_path": "es_ES-mls_10246-low.onnx",
-        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
-    },
-    "Español España    | Sharvard (Medium)": {
-        "model_path": "es_ES-sharvard-medium.onnx",
-        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
-    },
-    "English US    | Lessac (High)": {
-        "model_path": "en_US-lessac-high.onnx",
-        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
-    },
-    "English US    | Amy (Medium)": {
-        "model_path": "en_US-amy-medium.onnx",
-        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
-    },
-    "English US    | Dany (Low)": {
-        "model_path": "en_US-danny-low.onnx",
-        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
-    },
-    "English US    | HFC Male": {
-        "model_path": "en_US-hfc_male-medium.onnx",
-        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
-    },
-    "English US    | Kusal (Medium)": {
-        "model_path": "en_US-kusal-medium.onnx",
-        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
-    },
-    "English US    | Joe (Medium)": {
-        "model_path": "en_US-joe-medium.onnx",
-        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
-    },
-    "English US    | 12Arctic (Medium)": {
-        "model_path": "en_US-l2arctic-medium.onnx",
-        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
-    },
-    "English US    | LibriTTS (High)": {
-        "model_path": "en_US-libritts-high.onnx",
-        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
     }
 }
-def rate_limit(limit):
-    def decorator(func):
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            ip = request.remote_addr
-            conn = sqlite3.connect(database_path)
-            cursor = conn.cursor()
-            cursor.execute("SELECT last_request FROM rate_limit WHERE ip=?", (ip,))
-            result = cursor.fetchone()
-            if result:
-                elapsed_time = time.time() - result[0]
-                if elapsed_time < limit:
-                    conn.close()
-                    return jsonify({'error': 'Too many requests. Please try again later.'}), 429
-            cursor.execute("INSERT OR REPLACE INTO rate_limit (ip, last_request) VALUES (?, ?)", (ip, time.time()))
-            conn.commit()
-            conn.close()
-            return func(*args, **kwargs)
-        return wrapper
-    return decorator
+# Comprueba si los modelos definidos existen en la carpeta de modelos
+existing_models = [model_name for model_name in model_names.keys() if os.path.isfile(os.path.join(model_folder, model_names[model_name]["model_path"]))]
 
-# Tu código de funciones y rutas aquí...
+# Conexión a la base de datos SQLite
+db_path = os.path.join(file_folder, 'rate_limit.db')
+conn = sqlite3.connect(db_path)
+conn.execute('''CREATE TABLE IF NOT EXISTS rate_limit (
+                 ip TEXT PRIMARY KEY,
+                 last_request REAL
+                 )''')
+conn.commit()
+
+def update_request_time(ip):
+    conn.execute("INSERT OR REPLACE INTO rate_limit(ip, last_request) VALUES (?, ?)", (ip, time.time()))
+    conn.commit()
+
+def get_last_request_time(ip):
+    cursor = conn.execute("SELECT last_request FROM rate_limit WHERE ip=?", (ip,))
+    result = cursor.fetchone()
+    if result:
+        return result[0]
+    return None
+
 def multiple_replace(text, replacements):
     # Iterar sobre cada par de remplazo
     for old, new in replacements:
@@ -195,6 +98,34 @@ def convert_text_to_speech(text, model_name):
     else:
         logging.error(f"No se encontró el binario de Piper en la ubicación especificada.")
         return None
+
+def rate_limit(limit):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            ip = request.remote_addr
+            last_request = get_last_request_time(ip)
+            if last_request is not None:
+                elapsed_time = time.time() - last_request
+                if elapsed_time < limit:
+                    return jsonify({'error': 'Too many requests. Please try again later.'}), 429
+            update_request_time(ip)
+            return func(*args, **kwargs)
+        return wrapper
+    return decorator
+
+def restrict_access(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        # Verifica si la solicitud se hizo desde la página index.html
+        referer = request.headers.get("Referer")
+        if referer and referer.endswith("/"):
+            # Permite el acceso a la función si la solicitud proviene de la página index.html
+            return func(*args, **kwargs)
+        else:
+            # Devuelve un mensaje de error o redirecciona a otra página
+            return "Acceso no autorizado", 403  # Código de respuesta HTTP 403 - Forbidden
+    return wrapper
 
 @app.route('/')
 def index():
