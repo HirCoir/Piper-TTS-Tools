@@ -131,7 +131,7 @@ def index():
 
 @app.route('/og-image.jpg')
 def og_image():
-    return send_from_directory(os.path.join(app.root_path, 'templates'), 'og-image.jpg', mimetype='image/jpeg')
+    return send_from_directory(os.path.join(app.root_path, 'templates'), 'og-image.jpeg', mimetype='image/jpeg')
 
 @app.route('/convert', methods=['POST'])
 @restrict_access
