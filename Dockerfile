@@ -9,7 +9,7 @@ ENV DOWNLOAD_URL_BASE=https://github.com/rhasspy/piper/releases/download/2023.11
 
 # Instala el cliente de Hugging Face
 RUN pip install --upgrade pip \
-    && pip install flask -U "huggingface_hub[cli]"
+    && pip install flask -U "huggingface_hub[cli]" sqlite3
 
 # Comprueba si TOKEN_HUGGINGFACE tiene un valor antes de ejecutar la línea RUN
 RUN if [ -z "$TOKEN_HUGGINGFACE" ]; then \
