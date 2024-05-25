@@ -11,67 +11,219 @@
     <meta property="og:image" content="https://tts.hircoir.eu.org/og-image.jpg">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://tts.hircoir.eu.org">
-    <link rel="icon" type="image/x-icon" href="https://tts.hircoir.eu.org/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('favicon') }}">
     <title>TTS Hircoir - Plataforma de Texto a Voz</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "TTS Hircoir",
+      "url": "https://tts.hircoir.eu.org",
+      "description": "Plataforma de texto a voz para mejorar la accesibilidad y la productividad.",
+      "author": {
+        "@type": "Person",
+        "name": "Tu Nombre"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "TTS Hircoir"
+      },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://tts.hircoir.eu.org/?s={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <style>
         body {
             background-color: #222;
             color: #fff;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
-        .btn-primary, .btn-primary:hover, .btn-primary:focus {
-            background-color: #007bff;
-            border-color: #007bff;
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        #audio-container {
+            margin-top: 20px;
         }
         footer {
             background-color: #333;
             color: #eee;
             padding: 10px 0;
             text-align: center;
-            position: fixed;
-            width: 100%;
-            bottom: 0;
         }
+        
     </style>
 </head>
 <body>
-    <div class="container text-center">
-        <h1 class="mt-5">Convertidor de Texto a Audio</h1>
-        <form id="conversion-form" class="mt-4">
-            <div class="form-group">
-                <label for="model">Modelo:</label>
-                <select id="model" name="model" class="form-control">
-                    <!-- Opciones del modelo -->
+    <div class="container mx-auto py-10">
+        <h1 class="text-4xl font-bold mb-8">Convertidor de Texto a Audio</h1>
+        <form id="conversion-form" class="space-y-4">
+            <div>
+                <label for="model" class="block text-lg">Modelo:</label>
+                <select id="model" name="model" class="w-full p-2 bg-gray-700 border border-gray-600 rounded">
                     {% for model in model_options %}
                     <option value="{{ model }}">{{ model }}</option>
                     {% endfor %}
                 </select>
             </div>
-            <div class="form-group">
-                <label for="text">Texto:</label>
-                <textarea id="text" name="text" rows="4" maxlength="1000" class="form-control autosize" placeholder="Escribe tu texto aquí."></textarea>
+            <div>
+                <label for="text" class="block text-lg">Texto:</label>
+                <textarea id="text" name="text" rows="4" maxlength="1000" placeholder="Escribe tu texto aquí." class="w-full p-2 bg-gray-700 border border-gray-600 rounded autosize"></textarea>
             </div>
-            <button type="submit" class="btn btn-primary">Generar audio</button>
+            <div>
+                <button type="submit" class="w-full p-3 bg-blue-600 hover:bg-blue-700 rounded text-white">Generar audio</button>
+            </div>
         </form>
-        <div id="audio-container" class="mt-4"></div>
+        <center><div id="audio-container" class="mt-8"></div></center>
     </div>
-
     <footer>
         <p>© 2024 HirLab. Todos los derechos reservados.</p>
-        <div class="d-flex justify-content-center">
-            <a href="https://youtube.com/@hircoir" class="btn btn-outline-light btn-sm mx-2" target="_blank">
-                <i class="fab fa-youtube"></i> YouTube
-            </a>
-            <a href="https://github.com/HirCoir/Piper-TTS-Tools" class="btn btn-outline-light btn-sm mx-2" target="_blank">
-                <i class="fab fa-github"></i> GitHub
-            </a>
-        </div>
     </footer>
+    <script>
+      /*!
+	autosize 4.0.2
+	license: MIT
+	http://www.jacklmoore.com/autosize
+*/
+! function(e, t) {
+    if ("function" == typeof define && define.amd) define(["module", "exports"], t);
+    else if ("undefined" != typeof exports) t(module, exports);
+    else {
+        var n = {
+            exports: {}
+        };
+        t(n, n.exports), e.autosize = n.exports
+    }
+}(this, function(e, t) {
+    "use strict";
+    var n, o, p = "function" == typeof Map ? new Map : (n = [], o = [], {
+            has: function(e) {
+                return -1 < n.indexOf(e)
+            },
+            get: function(e) {
+                return o[n.indexOf(e)]
+            },
+            set: function(e, t) {
+                -1 === n.indexOf(e) && (n.push(e), o.push(t))
+            },
+            delete: function(e) {
+                var t = n.indexOf(e); - 1 < t && (n.splice(t, 1), o.splice(t, 1))
+            }
+        }),
+        c = function(e) {
+            return new Event(e, {
+                bubbles: !0
+            })
+        };
+    try {
+        new Event("test")
+    } catch (e) {
+        c = function(e) {
+            var t = document.createEvent("Event");
+            return t.initEvent(e, !0, !1), t
+        }
+    }
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/autosize.js/4.0.2/autosize.min.js"></script>
+    function r(r) {
+        if (r && r.nodeName && "TEXTAREA" === r.nodeName && !p.has(r)) {
+            var e, n = null,
+                o = null,
+                i = null,
+                d = function() {
+                    r.clientWidth !== o && a()
+                },
+                l = function(t) {
+                    window.removeEventListener("resize", d, !1), r.removeEventListener("input", a, !1), r.removeEventListener("keyup", a, !1), r.removeEventListener("autosize:destroy", l, !1), r.removeEventListener("autosize:update", a, !1), Object.keys(t).forEach(function(e) {
+                        r.style[e] = t[e]
+                    }), p.delete(r)
+                }.bind(r, {
+                    height: r.style.height,
+                    resize: r.style.resize,
+                    overflowY: r.style.overflowY,
+                    overflowX: r.style.overflowX,
+                    wordWrap: r.style.wordWrap
+                });
+            r.addEventListener("autosize:destroy", l, !1), "onpropertychange" in r && "oninput" in r && r.addEventListener("keyup", a, !1), window.addEventListener("resize", d, !1), r.addEventListener("input", a, !1), r.addEventListener("autosize:update", a, !1), r.style.overflowX = "hidden", r.style.wordWrap = "break-word", p.set(r, {
+                destroy: l,
+                update: a
+            }), "vertical" === (e = window.getComputedStyle(r, null)).resize ? r.style.resize = "none" : "both" === e.resize && (r.style.resize = "horizontal"), n = "content-box" === e.boxSizing ? -(parseFloat(e.paddingTop) + parseFloat(e.paddingBottom)) : parseFloat(e.borderTopWidth) + parseFloat(e.borderBottomWidth), isNaN(n) && (n = 0), a()
+        }
+
+        function s(e) {
+            var t = r.style.width;
+            r.style.width = "0px", r.offsetWidth, r.style.width = t, r.style.overflowY = e
+        }
+
+        function u() {
+            if (0 !== r.scrollHeight) {
+                var e = function(e) {
+                        for (var t = []; e && e.parentNode && e.parentNode instanceof Element;) e.parentNode.scrollTop && t.push({
+                            node: e.parentNode,
+                            scrollTop: e.parentNode.scrollTop
+                        }), e = e.parentNode;
+                        return t
+                    }(r),
+                    t = document.documentElement && document.documentElement.scrollTop;
+                r.style.height = "", r.style.height = r.scrollHeight + n + "px", o = r.clientWidth, e.forEach(function(e) {
+                    e.node.scrollTop = e.scrollTop
+                }), t && (document.documentElement.scrollTop = t)
+            }
+        }
+
+        function a() {
+            u();
+            var e = Math.round(parseFloat(r.style.height)),
+                t = window.getComputedStyle(r, null),
+                n = "content-box" === t.boxSizing ? Math.round(parseFloat(t.height)) : r.offsetHeight;
+            if (n < e ? "hidden" === t.overflowY && (s("scroll"), u(), n = "content-box" === t.boxSizing ? Math.round(parseFloat(window.getComputedStyle(r, null).height)) : r.offsetHeight) : "hidden" !== t.overflowY && (s("hidden"), u(), n = "content-box" === t.boxSizing ? Math.round(parseFloat(window.getComputedStyle(r, null).height)) : r.offsetHeight), i !== n) {
+                i = n;
+                var o = c("autosize:resized");
+                try {
+                    r.dispatchEvent(o)
+                } catch (e) {}
+            }
+        }
+    }
+
+    function i(e) {
+        var t = p.get(e);
+        t && t.destroy()
+    }
+
+    function d(e) {
+        var t = p.get(e);
+        t && t.update()
+    }
+    var l = null;
+    "undefined" == typeof window || "function" != typeof window.getComputedStyle ? ((l = function(e) {
+        return e
+    }).destroy = function(e) {
+        return e
+    }, l.update = function(e) {
+        return e
+    }) : ((l = function(e, t) {
+        return e && Array.prototype.forEach.call(e.length ? e : [e], function(e) {
+            return r(e)
+        }), e
+    }).destroy = function(e) {
+        return e && Array.prototype.forEach.call(e.length ? e : [e], i), e
+    }, l.update = function(e) {
+        return e && Array.prototype.forEach.call(e.length ? e : [e], d), e
+    }), t.default = l, e.exports = t.default
+});
+    </script>
     <script>
         document.getElementById('conversion-form').addEventListener('submit', async function (e) {
             e.preventDefault();
