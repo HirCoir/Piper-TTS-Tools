@@ -128,7 +128,8 @@ def index():
     domain_url = request.url_root
     model_options = existing_models
     logging.info("Contents of current folder: %s", os.listdir(file_folder))
-    return render_template('index.html', model_options=model_options)
+    return render_template('index.html', model_options=model_options, domain_url=domain_url)
+
 
 @app.route('/og-image.jpg')
 def og_image():
