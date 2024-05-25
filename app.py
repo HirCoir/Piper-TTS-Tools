@@ -129,6 +129,10 @@ def index():
     logging.info("Contents of current folder: %s", os.listdir(file_folder))
     return render_template('index.html', model_options=model_options)
 
+@app.route('/og-image.jpg')
+def og_image():
+    return send_from_directory(os.path.join(app.root_path, 'templates'), 'og-image.jpg', mimetype='image/jpeg')
+
 @app.route('/convert', methods=['POST'])
 @restrict_access
 @rate_limit(5, 60)  # Limita las solicitudes a 5 por minuto por IP
