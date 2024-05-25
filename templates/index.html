@@ -72,6 +72,19 @@
         .social-icons a:hover {
             color: #fff;
         }
+        
+        /* Estilos específicos para dispositivos Android */
+        @media only screen and (max-width: 767px) and (hover: none) and (pointer: coarse) {
+            body {
+                font-size: 16px;
+            }
+            h1 {
+                font-size: 2.5rem;
+            }
+            .container {
+                padding: 0 10px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -119,9 +132,9 @@
     </script>
     <script>
       /*!
-    autosize 4.0.2
-    license: MIT
-    http://www.jacklmoore.com/autosize
+	autosize 4.0.2
+	license: MIT
+	http://www.jacklmoore.com/autosize
 */
 ! function(e, t) {
     if ("function" == typeof define && define.amd) define(["module", "exports"], t);
