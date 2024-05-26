@@ -1,8 +1,8 @@
 ## Introduction
 
-Welcome to the documentation of the speech synthesis application using Piper for Windows. This application allows converting text to speech in various languages and accents using custom and public speech synthesis models, which must be based on the .onnx format compatible with Piper. Additionally, it utilizes the Flask framework to create an interactive web interface.
+Welcome to the documentation of the speech synthesis application using Piper for Windows. This application allows converting text to speech in various languages and accents using custom and public speech synthesis models, which must be based on the .onnx format compatible with Piper. Additionally, it utilizes the PyQt5 framework to create interface.
 
-![Screenshot](preview.png)
+![Screenshot](preview.jpg)
 
 ## Deploying the Application
 
@@ -11,7 +11,7 @@ To deploy the application, follow these steps:
 1. Clone the repository to your server:
 
    ```bash
-   git clone -b Windows https://github.com/HirCoir/HirCoir-Piper-tts-app.git
+   git clone -b windows-desktop https://github.com/HirCoir/HirCoir-Piper-tts-app.git
    ```
 
 2. Enter the cloned repository directory:
@@ -23,16 +23,15 @@ To deploy the application, follow these steps:
 3. Download Piper for Windows from the following link: [Piper Releases](https://github.com/rhasspy/piper/releases/)
    
 4. Extract the `piper` folder from the downloaded file and place it in the project directory.
+5. `pip install -r requirements.txt`
+6. Select folder with models:
+   Upon running `python app.py`, it will automatically open a window where you need to select the folder containing your .onnx models.
 
-5. Run the `app.py` file with Python:
+7. Run the `app.py` file with Python:
 
    ```bash
    python app.py
    ```
-
-6. Select folder with models:
-   Upon running `python app.py`, it will automatically open a window where you need to select the folder containing your .onnx models.
-
 ## Important Considerations
 
 - Make sure you have Python installed on your system before running the application.
