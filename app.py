@@ -31,6 +31,10 @@ model_names = {
         "model_path": "es_MX-Nate.onnx",
         "replacements": [('\n', ' . '), ('*', ''), (')', ',')]
     },
+    "Español México | Veritasium": {
+        "model_path": "es_MX-Veritasium-high.onnx",
+        "replacements": [('\n', ' . '), ('*', ''), (')', ',')]
+    },
     "Español México | Lucasmelor": {
         "model_path": "es_MX_Lucasmelor-high.onnx",
         "replacements": [('\n', ' . '), ('*', ''), (')', ',')]
