@@ -18,35 +18,35 @@ model_folder = "/home/app/models/"
 model_names = {
     "NateGentile": {
         "model_path": "es_MX-Nate.onnx",
-        "replacements": [('\n', ' . '), ('*', ''), (')', ',')]
+        "replacements": [('\n', ' . '), ('*', ''), ('#', '')]
     },
     "Veritasium": {
         "model_path": "es_MX-Veritasium-high.onnx",
-        "replacements": [('\n', ' . '), ('*', ''), (')', ',')]
+        "replacements": [('\n', ' . '), ('*', ''), ('#', '')]
     },
     "Lucasmelor": {
         "model_path": "es_MX_Lucasmelor-high.onnx",
-        "replacements": [('\n', ' . '), ('*', ''), (')', ',')]
+        "replacements": [('\n', ' . '), ('*', ''), ('#', '')]
     },
     "DocTops": {
         "model_path": "es_MX-DocTops.onnx",
-        "replacements": [('\n', ' . '), ('*', ''), (')', ',')]
+        "replacements": [('\n', ' . '), ('*', ''), ('#', '')]
     },
     "Sorah": {
         "model_path": "es_MX-sorah-high.onnx",
-        "replacements": [('\n', ' . '), ('*', ''), (')', ',')]
+        "replacements": [('\n', ' . '), ('*', ''), ('#', '')]
     },
     "Laura": {
         "model_path": "es_MX-laura-high.onnx",
-        "replacements": [('\n', ' . '), ('*', ''), (')', ',')]
+        "replacements": [('\n', ' . '), ('*', ''), ('#', '')]
     },
     "Emma": {
         "model_path": "es_MX-emma-high.onnx",
-        "replacements": [('\n', ' . '), ('*', ''), (')', ',')]
+        "replacements": [('\n', ' . '), ('*', ''), ('#', '')]
     },
     "Kamora": {
         "model_path": "kamora.onnx",
-        "replacements": [('\n', ''), ('*', ''), (')', ',')]
+        "replacements": [('\n', ''), ('*', ''), ('#', '')]
     },
     "HirCoir": {
         "model_path": "es_MX-HirCoir.onnx",
