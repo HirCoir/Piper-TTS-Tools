@@ -16,17 +16,45 @@ model_folder = "/home/app/models/"
 
 # Define los nombres asignados a modelos específicos, en caso de no existir no se muestran
 model_names = {
-    "kamora": {
-        "model_path": "es_MX-kamora-tiny-x-low.onnx",
-        "replacements": [('\n', '. '),('*', '')]
+    "NateGentile": {
+        "model_path": "es_MX-Nate.onnx",
+        "replacements": [('\n', ' . '), ('*', ''), (')', ',')]
     },
-    "claude": {
-        "model_path": "es_MX-claude-14947-epoch-high.onnx",
-        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
+    "Veritasium": {
+        "model_path": "es_MX-Veritasium-high.onnx",
+        "replacements": [('\n', ' . '), ('*', ''), (')', ',')]
     },
-    "kamora-v2": {
+    "Lucasmelor": {
+        "model_path": "es_MX_Lucasmelor-high.onnx",
+        "replacements": [('\n', ' . '), ('*', ''), (')', ',')]
+    },
+    "DocTops": {
+        "model_path": "es_MX-DocTops.onnx",
+        "replacements": [('\n', ' . '), ('*', ''), (')', ',')]
+    },
+    "Sorah": {
+        "model_path": "es_MX-sorah-high.onnx",
+        "replacements": [('\n', ' . '), ('*', ''), (')', ',')]
+    },
+    "Laura": {
+        "model_path": "es_MX-laura-high.onnx",
+        "replacements": [('\n', ' . '), ('*', ''), (')', ',')]
+    },
+    "Emma": {
+        "model_path": "es_MX-emma-high.onnx",
+        "replacements": [('\n', ' . '), ('*', ''), (')', ',')]
+    },
+    "Kamora": {
         "model_path": "kamora.onnx",
-        "replacements": [('\n', '. '),('*', '')]
+        "replacements": [('\n', ''), ('*', ''), (')', ',')]
+    },
+    "HirCoir": {
+        "model_path": "es_MX-HirCoir.onnx",
+        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' '), (')', ',')]
+    },
+    "Claude": {
+        "model_path": "es_MX-claude-14947-epoch-high.onnx",
+        "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' '), (')', ',')]
     }
 }
 
