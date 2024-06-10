@@ -40,8 +40,12 @@ model_names = {
         "model_path": "kamora.onnx",
         "replacements": [('\n', '. '),('*', '')]
     }
+    ,
+    "Angel": {
+        "model_path": "es_MX-modelo1-high.onnx",
+        "replacements": [('\n', '. '),('*', '')]
+    }
 }
-
 # Variable para almacenar el token secreto
 secret_key = os.environ.get('SECRET_KEY', 'default_secret_key')
 
