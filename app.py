@@ -55,6 +55,10 @@ model_names = {
     "Claude": {
         "model_path": "es_MX-claude-14947-epoch-high.onnx",
         "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' '), (')', ',')]
+    },
+    "Angel": {
+        "model_path": "es_MX-modelo1-high.onnx",
+        "replacements": [('\n', '. '),('*', '')]
     }
 }
 
